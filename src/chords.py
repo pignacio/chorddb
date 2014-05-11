@@ -80,3 +80,38 @@ class Chord():
             for variation in VARIATIONS:
                 yield Chord.parse(key + variation)
 
+class ChordLibrary():
+    _LIBRARY = None
+
+    @classmethod
+    def _init(cls, fname=None):
+        if cls._LIBRARY is not None:
+            return
+        fname = fname or "chord_library.yaml"
+        with open(fname) as fin:
+            cls._LIBRARY = yaml.load(fin)
+
+    @classmethod
+    def get(cls, chord, instrument):
+        cls._init()
+        try:
+            ichords = cls._LIBRARY[instrument]
+        except KeyError:
+            raise ValueError("Invalid instrument '{}'".format(instrument))
+
+        try:
+            chord = ichords[chord.note][chord.key()][chord.text()]
+        except KeyError:
+            raise ValueError("Could not find {} in variation library".format(chord))
+
+        if not chord:
+            raise ValueError("Chord is missing from library: {}".format(chord))
+
+        if isinstance(chord, basestring):
+            return chord
+        elif isinstance(chord, list):
+            return chord[0]
+        else:
+            raise ValueError("Invalid variation container type for {}: '{}'. should be string or list".format(chord, type(chord)))
+
+
