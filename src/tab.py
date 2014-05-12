@@ -46,7 +46,7 @@ class TablatureLine():
         if not stripped:
             return EmptyLine
         remainder = re.sub("\s+", " ", re.sub(CHORD_RE, "", stripped))
-        if len(remainder) * 2 < len(stripped):
+        if len(remainder) * 2 < len(re.sub("\s+", " ", stripped)):
             return ChordLine
         return LyricLine
 
