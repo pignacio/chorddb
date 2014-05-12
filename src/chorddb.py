@@ -13,7 +13,7 @@ def add_parsers(subparsers):
     parser = subparsers.add_parser("parse")
     parser.add_argument('filename',
                         help='file to parse tablature from')
-    parser.add_argument('--instrument', action='store', default=None,
+    parser.add_argument('-i' , '--instrument', action='store', default=None,
                         help='Instrument to fetch chords for')
     parser.set_defaults(func=_parse_tablature)
 
