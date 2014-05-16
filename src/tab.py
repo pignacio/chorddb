@@ -11,7 +11,9 @@ import re
 
 LOGGER = logging.getLogger(__name__)
 
+
 class Tablature():
+
     def __init__(self, lines):
         self._lines = lines
 
@@ -25,11 +27,14 @@ class Tablature():
     def parse(cls, lines):
         return cls([TablatureLine.from_line(line.rstrip("\n")) for line in lines])
 
+
 class TablatureLine():
+
     def render(self, debug=False, instrument=None):
         contents = []
         if debug:
-            contents.append(colors.ColoredOutput.colored("{}:".format(self.__class__.__name__), fore=colors.Fore.GREEN, style=colors.Style.BRIGHT))
+            contents.append(colors.ColoredOutput.colored("{}:".format(
+                self.__class__.__name__), fore=colors.Fore.GREEN, style=colors.Style.BRIGHT))
         contents.append(self._render(instrument=instrument))
         return "".join(contents)
 
@@ -52,13 +57,15 @@ class TablatureLine():
 
 
 class ChordLine(TablatureLine):
+
     def __init__(self, chords, positions):
         self._chords = chords
         self._positions = positions
 
     def _render(self, instrument=None, **kwargs):
         if len(self._positions) < len(self._chords):
-            self._positions += [-1] * (len(self._chords) - len(self._positions))
+            self._positions += [-1] * \
+                (len(self._chords) - len(self._positions))
         buff = colors.ColoredOutput(fore=colors.Fore.CYAN)
         for pos, chord in zip(self._positions, self._chords):
             if buff.tell() < pos:
@@ -67,7 +74,8 @@ class ChordLine(TablatureLine):
             try:
                 c = ChordLibrary.get(chord, instrument)
             except ValueError:
-                LOGGER.warning("Could not find %s in ChordLibrary for '%s'", chord, instrument)
+                LOGGER.warning(
+                    "Could not find %s in ChordLibrary for '%s'", chord, instrument)
                 c = None
             if c:
                 buff.write("({})".format(c), fore=colors.Fore.RED)
@@ -82,6 +90,7 @@ class ChordLine(TablatureLine):
 
 
 class LyricLine(TablatureLine):
+
     def __init__(self, line):
         self._line = line
 
@@ -94,6 +103,7 @@ class LyricLine(TablatureLine):
 
 
 class EmptyLine(TablatureLine):
+
     def _render(self, **kwargs):
         return ""
 

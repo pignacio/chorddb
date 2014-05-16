@@ -19,7 +19,9 @@ VARIATIONS_RE = "{}".format("|".join(VARIATIONS))
 CHORD_RE = "(({})({})?({})?)".format(NOTES_RE, ACCIDENTALS_RE, VARIATIONS_RE)
 STRICT_CHORD_RE = "^{}$".format(CHORD_RE)
 
+
 class Chord():
+
     def __init__(self, note, accidental, variation):
         note, accidental = notes.normalize(note, accidental)
         self._note = note
@@ -54,7 +56,8 @@ class Chord():
             note, accidental, chord = mobj.groups()[1:]
             return cls(note, accidental, chord)
         else:
-            raise ValueError("Couldn't parse Chord from '{}', CHORD_RE={}".format(text, CHORD_RE))
+            raise ValueError(
+                "Couldn't parse Chord from '{}', CHORD_RE={}".format(text, CHORD_RE))
 
     @classmethod
     def extract_chordpos(cls, line):
@@ -80,6 +83,7 @@ class Chord():
             for variation in VARIATIONS:
                 yield Chord.parse(key + variation)
 
+
 class ChordLibrary():
     _LIBRARY = None
 
@@ -102,7 +106,8 @@ class ChordLibrary():
         try:
             chord = ichords[chord.note][chord.key()][chord.text()]
         except KeyError:
-            raise ValueError("Could not find {} in variation library".format(chord))
+            raise ValueError(
+                "Could not find {} in variation library".format(chord))
 
         if not chord:
             raise ValueError("Chord is missing from library: {}".format(chord))
@@ -112,6 +117,5 @@ class ChordLibrary():
         elif isinstance(chord, list):
             return chord[0]
         else:
-            raise ValueError("Invalid variation container type for {}: '{}'. should be string or list".format(chord, type(chord)))
-
-
+            raise ValueError(
+                "Invalid variation container type for {}: '{}'. should be string or list".format(chord, type(chord)))

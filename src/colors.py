@@ -6,8 +6,10 @@ Created on May 11, 2014
 from colorama import Fore, Back, Style, init
 import StringIO
 
+
 class ColoredOutput():
     __INIT = init()
+
     def __init__(self, fore=Fore.WHITE, back=Back.BLACK, style=Style.NORMAL):
         self._buffer = StringIO.StringIO()
         self.switch(fore, back, style)
@@ -50,4 +52,3 @@ class ColoredOutput():
         output = cls(fore=fore, back=back, style=style)
         output.write(msg)
         return output.getvalue()
-
