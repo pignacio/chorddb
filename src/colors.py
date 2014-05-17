@@ -48,7 +48,8 @@ class ColoredOutput():
         return self._tell
 
     @classmethod
-    def colored(cls, msg, fore=Fore.WHITE, back=Back.BLACK, style=Style.NORMAL):
+    def colored(cls, msg, fore=Fore.WHITE, back=Back.BLACK,
+                style=Style.NORMAL):
         output = cls(fore=fore, back=back, style=style)
         output.write(msg)
         return output.getvalue()
