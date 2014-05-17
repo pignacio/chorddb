@@ -44,8 +44,8 @@ def main():
     try:
         func = _extract_from_options("func", options)
     except AttributeError:
-        raise Exception(
-            "Missing 'func' attribute. Maybe subparser '{}' didnt correctly set_defaults()?".format(subparser))
+        raise Exception("Missing 'func' attribute. Maybe subparser '{}' didnt "
+                        "correctly set_defaults()?".format(subparser))
 
     func(**options.__dict__)
 

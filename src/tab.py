@@ -25,7 +25,7 @@ class Tablature():
 
     @classmethod
     def parse(cls, lines):
-        return cls([TablatureLine.from_line(line.rstrip("\n")) for line in lines])
+        return cls([TablatureLine.from_line(l.rstrip("\n")) for l in lines])
 
 
 class TablatureLine():
@@ -33,8 +33,10 @@ class TablatureLine():
     def render(self, debug=False, instrument=None):
         contents = []
         if debug:
-            contents.append(colors.ColoredOutput.colored("{}:".format(
-                self.__class__.__name__), fore=colors.Fore.GREEN, style=colors.Style.BRIGHT))
+            contents.append(colors.ColoredOutput.colored(
+                "{}:".format(self.__class__.__name__),
+                fore=colors.Fore.GREEN, style=colors.Style.BRIGHT
+            ))
         contents.append(self._render(instrument=instrument))
         return "".join(contents)
 
@@ -74,8 +76,8 @@ class ChordLine(TablatureLine):
             try:
                 c = ChordLibrary.get(chord, instrument)
             except ValueError:
-                LOGGER.warning(
-                    "Could not find %s in ChordLibrary for '%s'", chord, instrument)
+                LOGGER.warning("Could not find %s in ChordLibrary for "
+                               "'%s'", chord, instrument)
                 c = None
             if c:
                 buff.write("({})".format(c), fore=colors.Fore.RED)

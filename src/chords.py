@@ -6,58 +6,58 @@ Created on May 10, 2014
 import re
 import yaml
 import notes
-
-NOTES = list("ABCDEFG")
-NOTES_RE = "[{}]".format("".join(NOTES))
-
-ACCIDENTALS = ["b", "#"]
-ACCIDENTALS_RE = "{}".format("|".join(ACCIDENTALS))
+from notes import Key
+from utils.decorators import memoize
+from utils.regexp import strict
 
 VARIATIONS = ["maj7", "m7", "m", "7", "dim", "aug", "sus4"]
 VARIATIONS_RE = "{}".format("|".join(VARIATIONS))
 
-CHORD_RE = "(({})({})?({})?)".format(NOTES_RE, ACCIDENTALS_RE, VARIATIONS_RE)
-STRICT_CHORD_RE = "^{}$".format(CHORD_RE)
+CHORD_RE = "(({})({})?({})?)".format(notes.NOTES_RE, notes.ACCIDENTALS_RE,
+                                     VARIATIONS_RE)
 
 
 class Chord():
 
-    def __init__(self, note, accidental, variation):
-        note, accidental = notes.normalize(note, accidental)
-        self._note = note
-        self._accidental = accidental
+    def __init__(self, key, variation=None):
+        self._key = key
         self._variation = variation
 
     @property
+    def key(self):
+        return self._key
+
+    @property
     def note(self):
-        return self._note
+        return self._key.note
 
     @property
     def accidental(self):
-        return self._accidental
+        return self._key.accidental
 
     @property
     def variation(self):
         return self._variation
 
-    def key(self):
-        return self._note + (self._accidental if self._accidental else "")
-
     def text(self):
-        return "".join(x if x else "" for x in (self._note, self._accidental, self._variation))
+        return "{}{}".format(self._key,
+                             self._variation if self._variation else "")
 
     def __str__(self):
         return "Chord:{}".format(self.text())
 
+    def transpose(self, interval):
+        return Chord(self._key.transpose(interval), self._variation)
+
     @classmethod
     def parse(cls, text):
-        mobj = re.search(STRICT_CHORD_RE, text)
+        mobj = re.search(strict(CHORD_RE), text)
         if mobj:
             note, accidental, chord = mobj.groups()[1:]
-            return cls(note, accidental, chord)
+            return cls(Key(note, accidental), chord)
         else:
-            raise ValueError(
-                "Couldn't parse Chord from '{}', CHORD_RE={}".format(text, CHORD_RE))
+            raise ValueError("Couldn't parse Chord from '{}', "
+                             "CHORD_RE={}".format(text, CHORD_RE))
 
     @classmethod
     def extract_chordpos(cls, line):
@@ -77,11 +77,12 @@ class Chord():
         return res
 
     @classmethod
-    def all_chords(cls):
-        for key in notes.all_keys():
-            yield Chord.parse(key)
+    @memoize
+    def all(cls):
+        for key in Key.all():
+            yield Chord(key)
             for variation in VARIATIONS:
-                yield Chord.parse(key + variation)
+                yield Chord(key, variation)
 
 
 class ChordLibrary():
@@ -104,7 +105,7 @@ class ChordLibrary():
             raise ValueError("Invalid instrument '{}'".format(instrument))
 
         try:
-            chord = ichords[chord.note][chord.key()][chord.text()]
+            chord = ichords[chord.note][str(chord.key)][chord.text()]
         except KeyError:
             raise ValueError(
                 "Could not find {} in variation library".format(chord))
@@ -117,5 +118,6 @@ class ChordLibrary():
         elif isinstance(chord, list):
             return chord[0]
         else:
-            raise ValueError(
-                "Invalid variation container type for {}: '{}'. should be string or list".format(chord, type(chord)))
+            raise ValueError("Invalid variation container type for {}: '{}'. "
+                             "Should be string or list".format(chord,
+                                                               type(chord)))
