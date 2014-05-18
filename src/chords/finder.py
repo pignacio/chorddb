@@ -16,7 +16,6 @@ class Keyoctave(object):
 
 
 class Instrument():
-
     def __init__(self, keyoctaves, frets):
         self._keyoctaves = keyoctaves
         self._frets = frets
@@ -46,6 +45,9 @@ class Instrument():
 
     def __len__(self):
         return len(self._keyoctaves)
+
+GUITAR = Instrument.parse([Key(k) for k in list("EADGBE")], 10)
+LOOG = Instrument.parse([Key(k) for k in list("GBE")], 10)
 
 class ChordFinder():
     def __init__(self, instrument, chord):
