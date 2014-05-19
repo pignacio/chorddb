@@ -127,7 +127,7 @@ class Fingering():
         self._start = start or 0
         if not 0 <= self._start < len(instrument):
             raise ValueError("Invalid start")
-        if len(instrument) < start + len(positions):
+        if len(instrument) < self._start + len(positions):
             raise ValueError("Invalid positions for instrument")
         if not all(0 <= p < instrument.frets for p in positions):
             raise ValueError("Invalid positions for instrument")
