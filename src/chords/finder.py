@@ -136,28 +136,19 @@ class Fingering():
     def positions(self):
         return self._positions
 
+    @property
+    def instrument(self):
+        return self._instrument
+
+    @property
+    def start(self):
+        return self._start
+
     def keyoctaves(self):
         return [ko.transpose(interval) for ko, interval in zip(self._instrument.keyoctaves[self._start:], self._positions)]
 
     def bass(self):
         return min(self.keyoctaves())
-
-    def penalty(self):
-        bar = min(self._positions)
-        indexed_poss = sorted(enumerate(x - bar for x in self._positions if x > bar), key=lambda (string, pos): (pos, string), reverse=True)
-        fingers = len(indexed_poss)
-        if fingers > 4 or (bar and fingers > 3):
-            return 10000
-        penalty = self._start * 7 ** 2
-        penalty += (len(self._instrument) - self._start - len(self._positions)) * 8 ** 2
-        penalty += sum((p - bar + 2) ** 2 for p in self._positions)
-        if bar:
-            penalty += len(self._instrument) * 3 ** 2 + bar * 10
-        for a, b in zip(self._positions, self._positions[1:]):
-            if a and b:
-                penalty += (a - b) ** 2
-        return penalty
-
 
     def _repr(self):
         res = ["x"] * len(self._instrument)
@@ -167,4 +158,24 @@ class Fingering():
     def __str__(self):
         return "".join(map(str, self._repr()))
 
-
+def get_fingering_penalty(fingering):
+    bar = min(x for x in fingering.positions if x)
+    indexed_poss = sorted(enumerate(x - bar for x in fingering.positions
+                              if x > bar),
+                          key=lambda (string, pos): (pos, string),
+                          reverse=True)
+    fingers = len(indexed_poss)
+    if fingers > 4 or (bar and fingers > 3):
+        return {'too many fingers': 10000}
+    penalty = {
+        'start': fingering.start * 5 ** 2,
+        'end': (len(fingering.instrument) - fingering.start -
+                len(fingering.positions)) * 8 ** 2,
+        'positions': sum((p - bar + 2) ** 2 for p in fingering.positions),
+        'bar': bar * len(fingering.instrument) * 3 if bar else 0,
+        'consecutive_diffs': sum((a - b) ** 2
+            for a, b in zip(fingering.positions, fingering.positions[1:])
+            if a and b),
+        'four_fingers': 50 if fingers == 4 else 0
+    }
+    return penalty
