@@ -9,9 +9,8 @@ import notes
 from notes import Key
 from utils.decorators import memoize
 from utils.regexp import strict
+from chords.variations import VARIATIONS_RE, VARIATIONS, VARIATIONS_NOTES
 
-VARIATIONS = ["maj7", "m7", "m", "7", "dim", "aug", "sus4"]
-VARIATIONS_RE = "{}".format("|".join(VARIATIONS))
 
 CHORD_RE = "(({})({})?({})?)".format(notes.NOTES_RE, notes.ACCIDENTALS_RE,
                                      VARIATIONS_RE)
@@ -38,6 +37,11 @@ class Chord():
     @property
     def variation(self):
         return self._variation
+
+    @memoize
+    def variation_keys(self):
+        return set([self.key.transpose(interval)
+                    for interval in VARIATIONS_NOTES[self.variation]])
 
     def text(self):
         return "{}{}".format(self._key,

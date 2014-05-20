@@ -32,8 +32,8 @@ _NOTE_ACCIDENTALS = {
     "F": "#",
     "G": "b#",
 }
-NOTE_ACCIDENTALS = dict((k, list(v)) for (k, v) in _NOTE_ACCIDENTALS.items())
 
+NOTE_ACCIDENTALS = dict((k, list(v)) for (k, v) in _NOTE_ACCIDENTALS.items())
 KEY_NORMALIZATIONS = {
     "Ab": "G#",
     "Bb": "A#",
@@ -68,12 +68,18 @@ class Key():
     def accidental(self):
         return self._accidental
 
+    def ord(self):
+        return self.all().index(self)
+
     def transpose(self, interval):
         index = (self.all().index(self) + interval) % len(self.all())
         return self.all()[index]
 
     def __eq__(self, okey):
         return self.note == okey.note and self.accidental == okey.accidental
+
+    def __ne__(self, okey):
+        return not self == okey
 
     def __lt__(self, okey):
         return (self.note < okey.note or
@@ -93,9 +99,12 @@ class Key():
         return cls(note, accidental)
 
     @classmethod
+    def from_ord(cls, index):
+        return cls.all()[index]
+
+    @classmethod
     @memoize
     def all(cls):
-        print "Key.all()"
         res = set()
         for note, accidentals in NOTE_ACCIDENTALS.items():
             for accidental in accidentals:
@@ -150,6 +159,9 @@ class KeyOctave():
 
     def __eq__(self, okey):
         return self.key == okey.key and self.octave == okey.octave
+
+    def __ne__(self, okey):
+        return not self == okey
 
     def __lt__(self, okey):
         return (self.octave < okey.octave or
