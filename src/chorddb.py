@@ -1,9 +1,10 @@
-import logging
-from tab import Tablature, TerminalRenderer
 from argparse import ArgumentParser
-import os
 import curses
+import logging
+import os
+
 from colors import CursesColors
+from tab import Tablature, TerminalRenderer
 from window import CursesRenderer
 
 
@@ -35,14 +36,17 @@ def _parse_tablature(filename, instrument, use_curses):
     else:
         TerminalRenderer().render(tab, chord_library=None)
 
+
 def _render_tablature_with_curses(stdscr, tab):
     CursesColors.init()
     CursesRenderer(stdscr, tab).run()
+
 
 def _extract_from_options(key, options):
     res = getattr(options, key)
     delattr(options, key)
     return res
+
 
 def main():
     import sys
