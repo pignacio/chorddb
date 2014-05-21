@@ -28,6 +28,7 @@ class Tablature():
         return cls([TablatureLine.from_line(l.rstrip("\n")) for l in lines])
 
 
+
 class TablatureLine():
 
     def render(self, debug=False, instrument=None):
@@ -112,3 +113,16 @@ class EmptyLine(TablatureLine):
     @classmethod
     def from_line(cls, line):
         return cls()
+
+class LineContents():
+    def __init__(self, line=None, chords=None):
+        self._line = line or ""
+        self._chords = chords or []
+
+    @property
+    def line(self):
+        return self._line
+
+    @property
+    def chords(self):
+        return self._chords
