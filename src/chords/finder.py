@@ -48,6 +48,8 @@ class Instrument():
 
 GUITAR = Instrument.parse([Key(k) for k in list("EADGBE")], 10)
 LOOG = Instrument.parse([Key(k) for k in list("GBE")], 10)
+UKELELE = Instrument([KeyOctave.parse(k) for k in ["G0", "C0", "E0", "A1"]], 10)
+
 
 class ChordFinder():
     def __init__(self, instrument, chord):
@@ -159,7 +161,11 @@ class Fingering():
         return "".join(map(str, self._repr()))
 
 def get_fingering_penalty(fingering):
-    bar = min(x for x in fingering.positions if x)
+    try:
+        bar = min(x for x in fingering.positions if x)
+    except Exception:
+        bar = 0
+
     indexed_poss = sorted(enumerate(x - bar for x in fingering.positions
                               if x > bar),
                           key=lambda (string, pos): (pos, string),
