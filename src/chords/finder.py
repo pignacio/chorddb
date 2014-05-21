@@ -16,6 +16,7 @@ class Keyoctave(object):
 
 
 class Instrument():
+
     def __init__(self, keyoctaves, frets):
         self._keyoctaves = keyoctaves
         self._frets = frets
@@ -27,7 +28,6 @@ class Instrument():
     @property
     def frets(self):
         return self._frets
-
 
     @classmethod
     def parse(cls, keys, frets):
@@ -48,10 +48,12 @@ class Instrument():
 
 GUITAR = Instrument.parse([Key(k) for k in list("EADGBE")], 10)
 LOOG = Instrument.parse([Key(k) for k in list("GBE")], 10)
-UKELELE = Instrument([KeyOctave.parse(k) for k in ["G0", "C0", "E0", "A1"]], 10)
+UKELELE = Instrument([KeyOctave.parse(k) for k in ["G0", "C0", "E0", "A1"]],
+                     10)
 
 
 class ChordFinder():
+
     def __init__(self, instrument, chord):
         self._instrument = instrument
         self._chord = chord
@@ -92,8 +94,6 @@ class ChordFinder():
             fingering = [x[0] for x in positions[start:]]
             yield Fingering(fingering, self._instrument, start)
 
-
-
     def _get_string_notes(self):
         string_notes = []
         for keyoctave in self._instrument.keyoctaves:
@@ -115,14 +115,17 @@ def get_fingerings(chord, instrument, bass_check=True):
             continue
         yield fingering
 
+
 def _max(fingering):
     return max(x[0] for x in fingering if x[0] > 0)
+
 
 def _min(fingering):
     return min(x[0] for x in fingering if x[0] > 0)
 
 
 class Fingering():
+
     def __init__(self, positions, instrument, start=None):
         self._instrument = instrument
         self._positions = positions
@@ -147,7 +150,9 @@ class Fingering():
         return self._start
 
     def keyoctaves(self):
-        return [ko.transpose(interval) for ko, interval in zip(self._instrument.keyoctaves[self._start:], self._positions)]
+        return [ko.transpose(interval) for ko, interval in
+                zip(self._instrument.keyoctaves[self._start:],
+                    self._positions)]
 
     def bass(self):
         return min(self.keyoctaves())
@@ -160,6 +165,7 @@ class Fingering():
     def __str__(self):
         return "".join(map(str, self._repr()))
 
+
 def get_fingering_penalty(fingering):
     try:
         bar = min(x for x in fingering.positions if x)
@@ -167,7 +173,7 @@ def get_fingering_penalty(fingering):
         bar = 0
 
     indexed_poss = sorted(enumerate(x - bar for x in fingering.positions
-                              if x > bar),
+                                    if x > bar),
                           key=lambda (string, pos): (pos, string),
                           reverse=True)
     fingers = len(indexed_poss)
@@ -179,9 +185,10 @@ def get_fingering_penalty(fingering):
                 len(fingering.positions)) * 8 ** 2,
         'positions': sum((p - bar + 2) ** 2 for p in fingering.positions),
         'bar': bar * len(fingering.instrument) * 3 if bar else 0,
-        'consecutive_diffs': sum((a - b) ** 2
-            for a, b in zip(fingering.positions, fingering.positions[1:])
-            if a and b),
+        'consecutive_diffs': sum((a - b) ** 2 for a, b in
+                                 zip(fingering.positions,
+                                     fingering.positions[1:])
+                                 if a and b),
         'four_fingers': 50 if fingers == 4 else 0
     }
     return penalty
