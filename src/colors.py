@@ -5,6 +5,7 @@ Created on May 11, 2014
 '''
 from colorama import Fore, Back, Style, init
 import StringIO
+import curses
 
 
 class ColoredOutput():
@@ -53,3 +54,21 @@ class ColoredOutput():
         output = cls(fore=fore, back=back, style=style)
         output.write(msg)
         return output.getvalue()
+
+
+class CursesColors():
+    CURSES_DEFAULT_COLOR = 0
+    CURSES_CHORD_COLOR = 1
+
+    _INITED = False
+
+    _COLORS_DEFINITIONS = {
+        CURSES_CHORD_COLOR: [curses.COLOR_CYAN, curses.COLOR_BLACK],
+    }
+
+    @classmethod
+    def init(cls):
+        if not cls._INITED:
+            for color_id, color_pair in cls._COLORS_DEFINITIONS.items():
+                curses.init_pair(color_id, *color_pair)
+            cls._INITED = True

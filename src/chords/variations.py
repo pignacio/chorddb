@@ -21,4 +21,3 @@ VARIATIONS_NOTES = {v: [Key.parse(n).ord() for n in ns]
 
 VARIATIONS = sorted((v for v in _VARIATIONS_NOTES if v), reverse=True)
 VARIATIONS_RE = "|".join(VARIATIONS)
-
