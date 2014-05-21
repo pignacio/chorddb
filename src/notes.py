@@ -51,9 +51,9 @@ KEY_NORMALIZATIONS = {
 class Key():
 
     def __init__(self, note, accidental=None):
-        if not note in NOTES:
+        if note not in NOTES:
             raise ValueError("Invalid note: '{}'".format(note))
-        if accidental and not accidental in ACCIDENTALS:
+        if accidental and accidental not in ACCIDENTALS:
             raise ValueError("Invalid accidental: '{}'".format(accidental))
         note, accidental = _normalize(note, accidental)
 
