@@ -1,5 +1,5 @@
 import logging
-from tab import Tablature
+from tab import Tablature, TerminalRenderer
 from argparse import ArgumentParser
 import os
 
@@ -24,7 +24,7 @@ def _parse_tablature(filename, instrument):
     if not os.path.isfile(filename):
         raise ValueError("'{}' is not a valid file".format(filename))
     tab = Tablature.parse(open(filename).readlines())
-    print tab.render(instrument=instrument)
+    TerminalRenderer().render(tab, chord_library=None)
 
 
 def _extract_from_options(key, options):
