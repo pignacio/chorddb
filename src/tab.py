@@ -27,6 +27,10 @@ class Tablature():
     def parse(cls, lines):
         return cls([TablatureLine.from_line(l.rstrip("\n")) for l in lines])
 
+    @property
+    def lines(self):
+        return self._lines
+
 
 class TablatureLine():
 
@@ -41,6 +45,9 @@ class TablatureLine():
         return "".join(contents)
 
     def _render(self, **kwargs):
+        raise NotImplementedError()
+
+    def contents(self):
         raise NotImplementedError()
 
     @classmethod
@@ -61,8 +68,12 @@ class TablatureLine():
 class ChordLine(TablatureLine):
 
     def __init__(self, chords, positions):
+        if len(chords) != len(positions):
+            raise ValueError("Different number of chords and positions: "
+                             "{} != {}".format(len(chords), len(positions)))
         self._chords = chords
         self._positions = positions
+        self._contents = LineContents(chords=zip(chords, positions))
 
     def _render(self, instrument=None, **kwargs):
         if len(self._positions) < len(self._chords):
@@ -84,6 +95,9 @@ class ChordLine(TablatureLine):
             buff.write(" ")
         return buff.getvalue().rstrip()
 
+    def contents(self):
+        return self._contents
+
     @classmethod
     def from_line(cls, line):
         chordpos = Chord.extract_chordpos(line)
@@ -95,9 +109,13 @@ class LyricLine(TablatureLine):
 
     def __init__(self, line):
         self._line = line
+        self._contents = LineContents(line=line)
 
     def _render(self, **kwargs):
         return self._line
+
+    def contents(self):
+        return self._contents
 
     @classmethod
     def from_line(cls, line):
@@ -106,9 +124,59 @@ class LyricLine(TablatureLine):
 
 class EmptyLine(TablatureLine):
 
+    def contents(self):
+        return LineContents()
+
     def _render(self, **kwargs):
         return ""
 
     @classmethod
     def from_line(cls, line):
         return cls()
+
+
+class LineContents():
+
+    def __init__(self, line=None, chords=None):
+        self._line = line or ""
+        self._chords = chords or []
+
+    @property
+    def line(self):
+        return self._line
+
+    @property
+    def chords(self):
+        return self._chords
+
+
+class TerminalRenderer():
+
+    def render(self, tablature, chord_library=None):
+        for line in tablature.lines:
+            self._render_line(line, chord_library=None)
+
+    def _render_line(self, line, chord_library):
+        contents = line.contents()
+        if contents.chords:
+            print self._render_chords(contents, chord_library)
+        else:
+            print self._render_text(contents)
+
+    def _render_text(self, contents):
+        return contents.line
+
+    def _render_chords(self, contents, chord_library):
+        buff = colors.ColoredOutput(fore=colors.Fore.CYAN)
+        for chord, pos in contents.chords:
+            if buff.tell() < pos:
+                buff.write(" " * (pos - buff.tell()))
+            buff.write(chord.text(), style=colors.Style.BRIGHT)
+            if chord_library:
+                c = chord_library.get(chord)
+            else:
+                c = None
+            if c:
+                buff.write("({})".format(c), fore=colors.Fore.RED)
+            buff.write(" ")
+        return buff.getvalue().rstrip()
