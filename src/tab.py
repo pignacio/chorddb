@@ -65,7 +65,6 @@ class TablatureLine():
         return LyricLine
 
 
-
 class ChordLine(TablatureLine):
 
     def __init__(self, chords, positions):
@@ -137,6 +136,7 @@ class EmptyLine(TablatureLine):
 
 
 class LineContents():
+
     def __init__(self, line=None, chords=None):
         self._line = line or ""
         self._chords = chords or []
@@ -148,3 +148,35 @@ class LineContents():
     @property
     def chords(self):
         return self._chords
+
+
+class TerminalRenderer():
+
+    def render(self, tablature, chord_library=None):
+        for line in tablature.lines:
+            self._render_line(line, chord_library=None)
+
+    def _render_line(self, line, chord_library):
+        contents = line.contents()
+        if contents.chords:
+            print self._render_chords(contents, chord_library)
+        else:
+            print self._render_text(contents)
+
+    def _render_text(self, contents):
+        return contents.line
+
+    def _render_chords(self, contents, chord_library):
+        buff = colors.ColoredOutput(fore=colors.Fore.CYAN)
+        for chord, pos in contents.chords:
+            if buff.tell() < pos:
+                buff.write(" " * (pos - buff.tell()))
+            buff.write(chord.text(), style=colors.Style.BRIGHT)
+            if chord_library:
+                c = chord_library.get(chord)
+            else:
+                c = None
+            if c:
+                buff.write("({})".format(c), fore=colors.Fore.RED)
+            buff.write(" ")
+        return buff.getvalue().rstrip()
