@@ -2,6 +2,9 @@ import logging
 from tab import Tablature, TerminalRenderer
 from argparse import ArgumentParser
 import os
+import curses
+from colors import CursesColors
+from window import CursesRenderer
 
 
 def _get_arg_parser():
@@ -17,21 +20,29 @@ def add_parsers(subparsers):
                         help='file to parse tablature from')
     parser.add_argument('-i', '--instrument', action='store', default=None,
                         help='Instrument to fetch chords for')
+    parser.add_argument("--curses",
+                        action='store_true', dest='use_curses', default=False,
+                        help="Use curses to show tablature")
     parser.set_defaults(func=_parse_tablature)
 
 
-def _parse_tablature(filename, instrument):
+def _parse_tablature(filename, instrument, use_curses):
     if not os.path.isfile(filename):
         raise ValueError("'{}' is not a valid file".format(filename))
     tab = Tablature.parse(open(filename).readlines())
-    TerminalRenderer().render(tab, chord_library=None)
+    if use_curses:
+        curses.wrapper(lambda s: _render_tablature_with_curses(s, tab))
+    else:
+        TerminalRenderer().render(tab, chord_library=None)
 
+def _render_tablature_with_curses(stdscr, tab):
+    CursesColors.init()
+    CursesRenderer(stdscr, tab).run()
 
 def _extract_from_options(key, options):
     res = getattr(options, key)
     delattr(options, key)
     return res
-
 
 def main():
     import sys
