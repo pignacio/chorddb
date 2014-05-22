@@ -245,10 +245,14 @@ class CursesRenderer():
         processor.add_case_insensitive_rule('b', lambda: self._move_selected_chord(-1))
         processor.add_case_insensitive_rule('j', lambda: self._move_chord_version(1))
         processor.add_case_insensitive_rule('h', lambda: self._move_chord_version(-1))
+        processor.add_case_insensitive_rule('r', self._reverse_chord_orientation)
         processor.add_case_insensitive_rule('q', self._do_quit)
         processor.add_rule(curses.KEY_DOWN, lambda: self._move_lyrics_vertical_scroll(1))
         processor.add_rule(curses.KEY_UP, lambda: self._move_lyrics_vertical_scroll(-1))
         return processor
+
+    def _reverse_chord_orientation(self):
+        self._reverse_chord_draw = not self._reverse_chord_draw
 
     def _move_selected_chord(self, interval):
         self._selected_chord_index += interval
@@ -299,4 +303,5 @@ INSTRUCTIONS = """
      version
  up/down - navigate
  q - quit
+ r - reverse chord orientation
 """.splitlines()
