@@ -19,16 +19,37 @@ class SubPad():
         self._ypos = ypos
         self._width = width
         self._height = height
+        self._vertical_scroll = 0
+
+    @property
+    def vertical_scroll(self):
+        return self._vertical_scroll
+
+    def set_vertical_scroll(self, value):
+        if value < 0:
+            value = 0
+        self._vertical_scroll = value
 
     def refresh(self):
-        self._pad.refresh(0, 0,
+        self._pad.refresh(self._vertical_scroll, 0,
                           self._ypos, self._xpos,
                           self._ypos + self._height - 1,
                           self._xpos + self._width - 1)
 
+    def clear(self):
+        self._pad.clear()
+
     @property
     def pad(self):
         return self._pad
+
+    @property
+    def width(self):
+        return self._width
+
+    @property
+    def height(self):
+        return self._height
 
 
 class MainWindow():
@@ -57,7 +78,7 @@ class MainWindow():
     def _subpad(self, width, height, xpos, ypos):
         subpad = SubPad(xpos, ypos, width, height)
         self._subpads.append(subpad)
-        return subpad.pad
+        return subpad
 
     def _draw_borders(self):
         width, height = self._get_screen_dimensions()
@@ -114,14 +135,21 @@ class CursesRenderer():
     def _process_key(self, key):
         if key == ord('n'):
             self._selected_chord_index += 1
+            self._center_chord()
         elif key == ord('b'):
             self._selected_chord_index -= 1
+            self._center_chord()
         if key == ord('j'):
             self._chord_version[self._selected_chord] += 1
         elif key == ord('h'):
             self._chord_version[self._selected_chord] -= 1
         elif key == ord('q'):
             self._quit = True
+
+    def _center_chord(self):
+        subpad = self._window.lyrics_pad
+        chord_line = self._all_chords[self._selected_chord_index][0]
+        subpad.set_vertical_scroll(chord_line - subpad.height / 2)
 
     def _render(self):
         self._update_selected_chord()
@@ -218,5 +246,5 @@ class CursesRenderer():
             return fingerings[version]
         return None
 
-    def _write(self, pad, xpos, ypos, text, color_id=0, attr=0):
-        pad.addstr(ypos, xpos, text, curses.color_pair(color_id) | attr)
+    def _write(self, subpad, xpos, ypos, text, color_id=0, attr=0):
+        subpad.pad.addstr(ypos, xpos, text, curses.color_pair(color_id) | attr)
