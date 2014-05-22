@@ -34,6 +34,15 @@ class Instrument():
                     keyoctaves.append(KeyOctave(key, current.octave))
         return cls(keyoctaves, frets, **kwargs)
 
+    @classmethod
+    def from_name(cls, name, default=None):
+        try:
+            return INSTRUMENTS[name]
+        except KeyError:
+            if default:
+                return default
+            raise
+
     def __len__(self):
         return len(self._keyoctaves)
 
