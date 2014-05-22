@@ -9,49 +9,6 @@ import itertools
 from utils.decorators import memoize
 
 
-class Keyoctave(object):
-
-    def __init__(self, key, octave):
-        pass
-
-
-class Instrument():
-
-    def __init__(self, keyoctaves, frets):
-        self._keyoctaves = keyoctaves
-        self._frets = frets
-
-    @property
-    def keyoctaves(self):
-        return self._keyoctaves
-
-    @property
-    def frets(self):
-        return self._frets
-
-    @classmethod
-    def parse(cls, keys, frets):
-        keyoctaves = []
-        for i, key in enumerate(keys):
-            if not keyoctaves:
-                keyoctaves.append(KeyOctave(key, 0))
-            else:
-                current = keyoctaves[-1]
-                if key <= current.key:
-                    keyoctaves.append(KeyOctave(key, current.octave + 1))
-                else:
-                    keyoctaves.append(KeyOctave(key, current.octave))
-        return cls(keyoctaves, frets)
-
-    def __len__(self):
-        return len(self._keyoctaves)
-
-GUITAR = Instrument.parse([Key(k) for k in list("EADGBE")], 10)
-LOOG = Instrument.parse([Key(k) for k in list("GBE")], 10)
-UKELELE = Instrument([KeyOctave.parse(k) for k in ["G0", "C0", "E0", "A1"]],
-                     10)
-
-
 class ChordFinder():
 
     def __init__(self, instrument, chord):
@@ -109,9 +66,9 @@ class ChordFinder():
         return cls(instrument, chord)._fingerings()
 
 
-def get_fingerings(chord, instrument, bass_check=True):
+def get_fingerings(chord, instrument):
     for fingering in ChordFinder.find(instrument, chord):
-        if bass_check and fingering.bass().key != chord.key:  # bass note test
+        if instrument.has_bass and fingering.bass().key != chord.key:
             continue
         yield fingering
 
