@@ -66,9 +66,9 @@ class ChordFinder():
         return cls(instrument, chord)._fingerings()
 
 
-def get_fingerings(chord, instrument, bass_check=True):
+def get_fingerings(chord, instrument):
     for fingering in ChordFinder.find(instrument, chord):
-        if bass_check and fingering.bass().key != chord.key:  # bass note test
+        if instrument.has_bass and fingering.bass().key != chord.key:
             continue
         yield fingering
 
