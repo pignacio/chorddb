@@ -6,6 +6,9 @@ Created on May 21, 2014
 
 import curses
 from colors import CursesColors
+from chords.library import ChordLibrary
+from chords.drawer import draw_chord
+import collections
 
 
 class SubPad():
@@ -47,7 +50,7 @@ class MainWindow():
 
     def _get_chord_pad_dimensions(self):
         width, height = self._get_screen_dimensions()
-        pad_width = min(30, width / 2)
+        pad_width = min(36, width / 2)
         pad_height = min(15, height / 2)
         return pad_width, pad_height
 
@@ -88,12 +91,15 @@ class MainWindow():
 
 class CursesRenderer():
 
-    def __init__(self, screen, tab, chord_library=None):
+    def __init__(self, screen, tab, instrument):
         self._screen = screen
         self._window = MainWindow(screen)
         self._tab = tab
-        self._chord_library = chord_library
+        self._instrument = instrument
+        self._chord_library = ChordLibrary(self._instrument)
+        self._reverse_chord_draw = False
         self._all_chords = list(self._all_chord_coords())
+        self._chord_version = collections.defaultdict(int)
         self._selected_chord_index = 0
         self._selected_chord = None
         self._quit = False
@@ -110,6 +116,10 @@ class CursesRenderer():
             self._selected_chord_index += 1
         elif key == ord('b'):
             self._selected_chord_index -= 1
+        if key == ord('j'):
+            self._chord_version[self._selected_chord] += 1
+        elif key == ord('h'):
+            self._chord_version[self._selected_chord] -= 1
         elif key == ord('q'):
             self._quit = True
 
@@ -163,17 +173,50 @@ class CursesRenderer():
                         CursesColors.CURSES_CHORD_COLOR,
                         attr)
             cursor += len(text)
-            if self._chord_library:
-                fingering = self._chord_library.get(chord)
-            else:
-                fingering = None
+            fingering = self._get_fingering(chord)
             if fingering:
-                pass  # TODO: write fingering
+                text = "({})".format(fingering)
+                self._write(self._window.lyrics_pad,
+                            cursor, ypos, text,
+                            CursesColors.CURSES_FINGERING_COLOR,
+                            attr)
+                cursor += len(text)
+
             cursor += 1
 
     def _render_chord(self):
         self._window.chord_pad.clear()
-        self._write(self._window.chord_pad, 0, 0, str(self._selected_chord))
+        fingering = self._get_fingering(self._selected_chord)
+        if fingering:
+            chord = self._selected_chord
+            lines = draw_chord(fingering, reverse=self._reverse_chord_draw)
+            fingerings = self._chord_library.get_all(chord)
+            version = self._chord_version[chord] % len(fingerings)
+
+            self._write(self._window.chord_pad, 0, 0,
+                        "{} ({})".format(chord, fingering))
+            self._write(self._window.chord_pad, 0, 1, "Version {} of {}"
+                        .format(version + 1, len(fingerings)))
+            for nline, line in enumerate(lines):
+                for nchar, char in enumerate(line):
+                    if char in ['o', 'x']:
+                        color = CursesColors.CURSES_FINGERING_COLOR
+                        attr = curses.A_BOLD
+                    else:
+                        color = CursesColors.CURSES_DEFAULT_COLOR
+                        attr = 0
+                    self._write(self._window.chord_pad, nchar, 3 + nline, char,
+                                color, attr)
+        else:
+            self._write(self._window.chord_pad, 0, 0,
+                        "{} No fingerings :(".format(self._selected_chord))
+
+    def _get_fingering(self, chord):
+        fingerings = self._chord_library.get_all(chord)
+        if fingerings:
+            version = self._chord_version[chord] % len(fingerings)
+            return fingerings[version]
+        return None
 
     def _write(self, pad, xpos, ypos, text, color_id=0, attr=0):
         pad.addstr(ypos, xpos, text, curses.color_pair(color_id) | attr)
