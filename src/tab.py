@@ -3,11 +3,12 @@ Created on May 10, 2014
 
 @author: ignacio
 '''
-from chords import CHORD_RE, Chord, ChordLibrary
+from chords import CHORD_RE, Chord
 import StringIO
 import colors
 import logging
 import re
+from chords.library import ChordLibrary
 
 LOGGER = logging.getLogger(__name__)
 
@@ -84,12 +85,7 @@ class ChordLine(TablatureLine):
             if buff.tell() < pos:
                 buff.write(" " * (pos - buff.tell()))
             buff.write(chord.text(), style=colors.Style.BRIGHT)
-            try:
-                c = ChordLibrary.get(chord, instrument)
-            except ValueError:
-                LOGGER.warning("Could not find %s in ChordLibrary for "
-                               "'%s'", chord, instrument)
-                c = None
+            c = ChordLibrary(instrument).get(chord)
             if c:
                 buff.write("({})".format(c), fore=colors.Fore.RED)
             buff.write(" ")
