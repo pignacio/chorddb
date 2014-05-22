@@ -145,7 +145,7 @@ class CursesRenderer():
         self._update_selected_chord()
         self._render_tab()
         self._render_chord()
-        # render instructions
+        self._render_instructions()
 
     def _update_selected_chord(self):
         try:
@@ -264,6 +264,11 @@ class CursesRenderer():
     def _do_quit(self):
         self._quit = True
 
+    def _render_instructions(self):
+        for nline, line in enumerate(INSTRUCTIONS):
+            self._write(self._window.instruction_pad, 0, nline, line)
+
+
 class InputProcessor():
     def __init__(self):
         self._rules = collections.defaultdict(list)
@@ -280,3 +285,18 @@ class InputProcessor():
     def process(self, key):
         for callback in self._rules[key]:
             callback()
+
+
+INSTRUCTIONS = """
+ INSTRUCTIONS/KEYBINDINGS
+
+
+ b - move to next chord in song
+ v - move to previous chord in song
+ j - move to next current chord
+     version
+ h - move to previous current chord
+     version
+ up/down - navigate
+ q - quit
+""".splitlines()
