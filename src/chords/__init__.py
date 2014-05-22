@@ -4,7 +4,6 @@ Created on May 10, 2014
 @author: ignacio
 '''
 import re
-import yaml
 import notes
 from notes import Key
 from utils.decorators import memoize
@@ -52,6 +51,14 @@ class Chord():
 
     def transpose(self, interval):
         return Chord(self._key.transpose(interval), self._variation)
+
+    def __hash__(self):
+        return hash((self._key, self._variation))
+
+    def __eq__(self, ochord):
+        return (isinstance(ochord, Chord) and
+                self.key == ochord.key and
+                self.variation == ochord.variation)
 
     @classmethod
     def parse(cls, text):

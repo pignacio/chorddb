@@ -6,6 +6,7 @@ import os
 from colors import CursesColors
 from tab import Tablature, TerminalRenderer
 from window import CursesRenderer
+from instrument import UKELELE, Instrument
 
 
 def _get_arg_parser():
@@ -30,16 +31,18 @@ def add_parsers(subparsers):
 def _parse_tablature(filename, instrument, use_curses):
     if not os.path.isfile(filename):
         raise ValueError("'{}' is not a valid file".format(filename))
+    instrument = Instrument.from_name(instrument, UKELELE)
     tab = Tablature.parse(open(filename).readlines())
     if use_curses:
-        curses.wrapper(lambda s: _render_tablature_with_curses(s, tab))
+        render = lambda s: _render_tablature_with_curses(s, tab, instrument)
+        curses.wrapper(render)
     else:
         TerminalRenderer().render(tab, chord_library=None)
 
 
-def _render_tablature_with_curses(stdscr, tab):
+def _render_tablature_with_curses(stdscr, tab, instrument):
     CursesColors.init()
-    CursesRenderer(stdscr, tab).run()
+    CursesRenderer(stdscr, tab, instrument).run()
 
 
 def _extract_from_options(key, options):

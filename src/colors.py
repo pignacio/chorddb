@@ -59,11 +59,13 @@ class ColoredOutput():
 class CursesColors():
     CURSES_DEFAULT_COLOR = 0
     CURSES_CHORD_COLOR = 1
+    CURSES_FINGERING_COLOR = 2
 
     _INITED = False
 
     _COLORS_DEFINITIONS = {
         CURSES_CHORD_COLOR: [curses.COLOR_CYAN, curses.COLOR_BLACK],
+        CURSES_FINGERING_COLOR: [curses.COLOR_RED, curses.COLOR_BLACK],
     }
 
     @classmethod
