@@ -114,13 +114,13 @@ class Fingering():
     def bass(self):
         return min(self.keyoctaves())
 
-    def _repr(self):
+    def full_positions(self):
         res = ["x"] * len(self._instrument)
         res[self._start:self._start] = self._positions
         return res[:len(self._instrument)]
 
     def __str__(self):
-        return "".join(map(str, self._repr()))
+        return "".join(map(str, self.full_positions()))
 
 
 def get_fingering_penalty(fingering):
