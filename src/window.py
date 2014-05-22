@@ -243,8 +243,8 @@ class CursesRenderer():
         processor = InputProcessor()
         processor.add_case_insensitive_rule('n', lambda: self._move_selected_chord(1))
         processor.add_case_insensitive_rule('b', lambda: self._move_selected_chord(-1))
-        processor.add_case_insensitive_rule('j', lambda: self._move_chord_version(1))
-        processor.add_case_insensitive_rule('h', lambda: self._move_chord_version(-1))
+        processor.add_case_insensitive_rule('j', lambda: self._move_chord_version(self._selected_chord, 1))
+        processor.add_case_insensitive_rule('h', lambda: self._move_chord_version(self._selected_chord, -1))
         processor.add_case_insensitive_rule('r', self._reverse_chord_orientation)
         processor.add_case_insensitive_rule('q', self._do_quit)
         processor.add_rule(curses.KEY_DOWN, lambda: self._move_lyrics_vertical_scroll(1))
@@ -262,7 +262,7 @@ class CursesRenderer():
         subpad = self._window.lyrics_pad
         subpad.set_vertical_scroll(subpad.vertical_scroll + interval)
 
-    def move_chord_version(self, chord, interval):
+    def _move_chord_version(self, chord, interval):
         self._chord_version[chord] += interval
 
     def _do_quit(self):
