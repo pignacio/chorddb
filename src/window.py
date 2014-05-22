@@ -124,6 +124,7 @@ class CursesRenderer():
         self._selected_chord_index = 0
         self._selected_chord = None
         self._quit = False
+        self._input_processor = self._get_input_processor()
 
     def run(self):
         while not self._quit:
@@ -133,18 +134,7 @@ class CursesRenderer():
             self._process_key(key)
 
     def _process_key(self, key):
-        if key == ord('n'):
-            self._selected_chord_index += 1
-            self._center_chord()
-        elif key == ord('b'):
-            self._selected_chord_index -= 1
-            self._center_chord()
-        if key == ord('j'):
-            self._chord_version[self._selected_chord] += 1
-        elif key == ord('h'):
-            self._chord_version[self._selected_chord] -= 1
-        elif key == ord('q'):
-            self._quit = True
+        self._input_processor.process(key)
 
     def _center_chord(self):
         subpad = self._window.lyrics_pad
@@ -155,7 +145,7 @@ class CursesRenderer():
         self._update_selected_chord()
         self._render_tab()
         self._render_chord()
-        # render instructions
+        self._render_instructions()
 
     def _update_selected_chord(self):
         try:
@@ -248,3 +238,65 @@ class CursesRenderer():
 
     def _write(self, subpad, xpos, ypos, text, color_id=0, attr=0):
         subpad.pad.addstr(ypos, xpos, text, curses.color_pair(color_id) | attr)
+
+    def _get_input_processor(self):
+        processor = InputProcessor()
+        processor.add_case_insensitive_rule('n', lambda: self._move_selected_chord(1))
+        processor.add_case_insensitive_rule('b', lambda: self._move_selected_chord(-1))
+        processor.add_case_insensitive_rule('j', lambda: self._move_chord_version(1))
+        processor.add_case_insensitive_rule('h', lambda: self._move_chord_version(-1))
+        processor.add_case_insensitive_rule('q', self._do_quit)
+        processor.add_rule(curses.KEY_DOWN, lambda: self._move_lyrics_vertical_scroll(1))
+        processor.add_rule(curses.KEY_UP, lambda: self._move_lyrics_vertical_scroll(-1))
+        return processor
+
+    def _move_selected_chord(self, interval):
+        self._selected_chord_index += interval
+        self._center_chord()
+
+    def _move_lyrics_vertical_scroll(self, interval):
+        subpad = self._window.lyrics_pad
+        subpad.set_vertical_scroll(subpad.vertical_scroll + interval)
+
+    def move_chord_version(self, chord, interval):
+        self._chord_version[chord] += interval
+
+    def _do_quit(self):
+        self._quit = True
+
+    def _render_instructions(self):
+        for nline, line in enumerate(INSTRUCTIONS):
+            self._write(self._window.instruction_pad, 0, nline, line)
+
+
+class InputProcessor():
+    def __init__(self):
+        self._rules = collections.defaultdict(list)
+
+    def add_rule(self, key, callback):
+        if isinstance(key, basestring):
+            key = ord(key)
+        self._rules[key].append(callback)
+
+    def add_case_insensitive_rule(self, key, callback):
+        self.add_rule(key.upper(), callback)
+        self.add_rule(key.lower(), callback)
+
+    def process(self, key):
+        for callback in self._rules[key]:
+            callback()
+
+
+INSTRUCTIONS = """
+ INSTRUCTIONS/KEYBINDINGS
+
+
+ b - move to next chord in song
+ v - move to previous chord in song
+ j - move to next current chord
+     version
+ h - move to previous current chord
+     version
+ up/down - navigate
+ q - quit
+""".splitlines()
