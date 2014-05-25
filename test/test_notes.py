@@ -6,11 +6,13 @@ Created on May 25, 2014
 
 from nose.tools import raises, eq_, ok_
 
-from notes import Key
+from notes import Key, KeyOctave
 import itertools
 
 _NOTES = "ABCDEFG"
 _KEYS = ["A", "A#", "B", "C", "C#", "D", "D#", "E", "F", "F#", "G", "G#"]
+_KEYOCTAVES = ["{}{}".format(__key, __octave)
+               for __octave in xrange(6) for __key in _KEYS]
 
 
 # Helpers
@@ -19,6 +21,10 @@ _KEYS = ["A", "A#", "B", "C", "C#", "D", "D#", "E", "F", "F#", "G", "G#"]
 def _keys():
     ''' Parse all valid keys '''
     return [Key.parse(k) for k in _KEYS]
+
+
+def _keyoctaves():
+    return [KeyOctave.parse(ko) for ko in _KEYOCTAVES]
 
 
 @raises(ValueError, TypeError)
@@ -94,3 +100,45 @@ def key_transpose_test():
 
 
 # / Key tests
+# KeyOctave tests
+
+
+def keyoctave_parse_test():
+    ''' Check valid KeyOctave parses '''
+    for key in _KEYS:
+        for octave in xrange(10):
+            keyoctave = KeyOctave.parse("{}{}".format(key, octave))
+            eq_(keyoctave.key, Key.parse(key))
+            eq_(keyoctave.octave, octave)
+
+
+def keyoctave_eq_test():
+    ''' Check different parses of the same keyoctave are equal '''
+    for keyoctave in _KEYOCTAVES:
+        eq_(KeyOctave.parse(keyoctave), KeyOctave.parse(keyoctave))
+
+
+def keyoctave_ord_test():
+    ''' Check Keyoctave's ord/from_ord consistency '''
+    for keyoctave in _keyoctaves():
+        eq_(keyoctave, KeyOctave.from_ord(keyoctave.ord()))
+
+
+def keyoctave_order_test():
+    ''' Check KeyOctave ordering '''
+    for keyoctave, okeyoctave in itertools.combinations(_keyoctaves(), 2):
+        ok_(keyoctave < okeyoctave)
+        ok_(keyoctave != okeyoctave)
+        ok_(keyoctave.ord() < okeyoctave.ord())
+
+
+def keyoctave_transpose_test():
+    ''' Check KeyOctave transpositions work '''
+    ikeyoctaves = list(enumerate(_keyoctaves()))
+    pairs = itertools.product(ikeyoctaves, ikeyoctaves)
+
+    for (index, keyoctave), (oindex, okeyoctave) in pairs:
+        eq_(keyoctave.transpose(oindex - index), okeyoctave)
+
+
+#  / KeyOctave tests
