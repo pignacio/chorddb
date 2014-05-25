@@ -3,10 +3,6 @@ Created on May 17, 2014
 
 @author: ignacio
 '''
-from notes import KeyOctave, Key
-from chords.variations import VARIATIONS_NOTES
-import itertools
-from utils.decorators import memoize
 
 
 class ChordFinder(object):

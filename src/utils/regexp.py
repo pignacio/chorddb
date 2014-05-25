@@ -30,7 +30,7 @@ class NoMatchError(ValueError):
 
 
 def re_search(pattern, string, flags=None):
-    mobj = re.search(pattern, string)
+    mobj = re.search(pattern, string, flags=flags)
     if not mobj:
         raise NoMatchError(pattern, string)
     return mobj

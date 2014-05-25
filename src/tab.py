@@ -150,7 +150,7 @@ class TerminalRenderer(object):
 
     def render(self, tablature, chord_library=None):
         for line in tablature.lines:
-            self._render_line(line, chord_library=None)
+            self._render_line(line, chord_library=chord_library)
 
     def _render_line(self, line, chord_library):
         contents = line.contents()

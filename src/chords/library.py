@@ -5,7 +5,6 @@ Created on May 21, 2014
 '''
 from chords.finder import get_fingering_penalty, get_fingerings
 from utils.decorators import memoize
-import logging
 
 
 class ChordLibrary(object):

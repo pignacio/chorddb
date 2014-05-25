@@ -23,7 +23,7 @@ class Instrument(object):
     @classmethod
     def parse(cls, keys, frets, **kwargs):
         keyoctaves = []
-        for i, key in enumerate(keys):
+        for key in keys:
             if not keyoctaves:
                 keyoctaves.append(KeyOctave(key, 0))
             else:
