@@ -3,9 +3,10 @@ Created on May 10, 2014
 
 @author: ignacio
 '''
-from utils.regexp import strict, re_search
 from functools import total_ordering
+
 from utils.decorators import memoize
+from utils.regexp import strict, re_search
 
 # Some definitions for posterity:
 # - Note: ABCDEFG
