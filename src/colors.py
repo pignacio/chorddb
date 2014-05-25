@@ -7,12 +7,14 @@ from colorama import Fore, Back, Style, init
 import StringIO
 import curses
 
+init()
 
-class ColoredOutput():
-    __INIT = init()
+
+class ColoredOutput(object):
 
     def __init__(self, fore=Fore.WHITE, back=Back.BLACK, style=Style.NORMAL):
         self._buffer = StringIO.StringIO()
+        self._fore = self._back = self._style = None
         self.switch(fore, back, style)
         self._tell = 0
 
@@ -56,7 +58,7 @@ class ColoredOutput():
         return output.getvalue()
 
 
-class CursesColors():
+class CursesColors(object):
     CURSES_DEFAULT_COLOR = 0
     CURSES_CHORD_COLOR = 1
     CURSES_FINGERING_COLOR = 2
@@ -72,5 +74,5 @@ class CursesColors():
     def init(cls):
         if not cls._INITED:
             for color_id, color_pair in cls._COLORS_DEFINITIONS.items():
-                curses.init_pair(color_id, *color_pair)
+                curses.init_pair(color_id, color_pair[0], color_pair[1])
             cls._INITED = True

@@ -11,7 +11,7 @@ from chords.drawer import draw_chord
 import collections
 
 
-class SubPad():
+class SubPad(object):
 
     def __init__(self, xpos, ypos, width, height):
         self._pad = curses.newpad(1000, 1000)
@@ -52,7 +52,7 @@ class SubPad():
         return self._height
 
 
-class MainWindow():
+class MainWindow(object):
 
     def __init__(self, curses_screen):
         self._curses_screen = curses_screen
@@ -110,7 +110,7 @@ class MainWindow():
         return self._instruction_pad
 
 
-class CursesRenderer():
+class CursesRenderer(object):
 
     def __init__(self, screen, tab, instrument):
         self._screen = screen
@@ -236,19 +236,22 @@ class CursesRenderer():
             return fingerings[version]
         return None
 
-    def _write(self, subpad, xpos, ypos, text, color_id=0, attr=0):
+    @staticmethod
+    def _write(subpad, xpos, ypos, text, color_id=0, attr=0):
         subpad.pad.addstr(ypos, xpos, text, curses.color_pair(color_id) | attr)
 
     def _get_input_processor(self):
         processor = InputProcessor()
-        processor.add_case_insensitive_rule('n', lambda: self._move_selected_chord(1))
-        processor.add_case_insensitive_rule('b', lambda: self._move_selected_chord(-1))
-        processor.add_case_insensitive_rule('j', lambda: self._move_chord_version(self._selected_chord, 1))
-        processor.add_case_insensitive_rule('h', lambda: self._move_chord_version(self._selected_chord, -1))
-        processor.add_case_insensitive_rule('r', self._reverse_chord_orientation)
-        processor.add_case_insensitive_rule('q', self._do_quit)
-        processor.add_rule(curses.KEY_DOWN, lambda: self._move_lyrics_vertical_scroll(1))
-        processor.add_rule(curses.KEY_UP, lambda: self._move_lyrics_vertical_scroll(-1))
+        cirule = processor.add_case_insensitive_rule
+        add_rule = processor.add_rule
+        cirule('n', lambda: self._move_selected_chord(1))
+        cirule('b', lambda: self._move_selected_chord(-1))
+        cirule('j', lambda: self._move_chord_version(self._selected_chord, 1))
+        cirule('h', lambda: self._move_chord_version(self._selected_chord, -1))
+        cirule('r', self._reverse_chord_orientation)
+        cirule('q', self._do_quit)
+        add_rule(curses.KEY_DOWN, lambda: self._move_lyrics_vertical_scroll(1))
+        add_rule(curses.KEY_UP, lambda: self._move_lyrics_vertical_scroll(-1))
         return processor
 
     def _reverse_chord_orientation(self):
@@ -273,7 +276,7 @@ class CursesRenderer():
             self._write(self._window.instruction_pad, 0, nline, line)
 
 
-class InputProcessor():
+class InputProcessor(object):
     def __init__(self):
         self._rules = collections.defaultdict(list)
 

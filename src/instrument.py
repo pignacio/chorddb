@@ -1,7 +1,7 @@
 from notes import KeyOctave, Key
 
 
-class Instrument():
+class Instrument(object):
 
     def __init__(self, keyoctaves, frets, has_bass=True):
         self._keyoctaves = keyoctaves
@@ -23,7 +23,7 @@ class Instrument():
     @classmethod
     def parse(cls, keys, frets, **kwargs):
         keyoctaves = []
-        for i, key in enumerate(keys):
+        for key in keys:
             if not keyoctaves:
                 keyoctaves.append(KeyOctave(key, 0))
             else:

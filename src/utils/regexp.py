@@ -29,8 +29,8 @@ class NoMatchError(ValueError):
         return self._string
 
 
-def re_search(pattern, string, flags=None):
-    mobj = re.search(pattern, string)
+def re_search(pattern, string, flags=0):
+    mobj = re.search(pattern, string, flags=flags)
     if not mobj:
         raise NoMatchError(pattern, string)
     return mobj

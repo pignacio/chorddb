@@ -3,13 +3,9 @@ Created on May 17, 2014
 
 @author: ignacio
 '''
-from notes import KeyOctave, Key
-from chords.variations import VARIATIONS_NOTES
-import itertools
-from utils.decorators import memoize
 
 
-class ChordFinder():
+class ChordFinder(object):
 
     def __init__(self, instrument, chord):
         self._instrument = instrument
@@ -45,7 +41,7 @@ class ChordFinder():
             self._backtrack(current)
             current.pop()
 
-    def _fingerings(self):
+    def fingerings(self):
         for positions in self._res:
             start = positions.count(None)
             fingering = [x[0] for x in positions[start:]]
@@ -63,7 +59,7 @@ class ChordFinder():
 
     @classmethod
     def find(cls, instrument, chord):
-        return cls(instrument, chord)._fingerings()
+        return cls(instrument, chord).fingerings()
 
 
 def get_fingerings(chord, instrument):
@@ -81,7 +77,7 @@ def _min(fingering):
     return min(x[0] for x in fingering if x[0] > 0)
 
 
-class Fingering():
+class Fingering(object):
 
     def __init__(self, positions, instrument, start=None):
         self._instrument = instrument
@@ -120,13 +116,13 @@ class Fingering():
         return res[:len(self._instrument)]
 
     def __str__(self):
-        return "".join(map(str, self.full_positions()))
+        return "".join(list(map(str, self.full_positions())))
 
 
 def get_fingering_penalty(fingering):
     try:
         bar = min(x for x in fingering.positions if x)
-    except Exception:
+    except ValueError:
         bar = 0
 
     indexed_poss = sorted(enumerate(x - bar for x in fingering.positions

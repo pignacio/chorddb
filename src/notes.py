@@ -21,7 +21,7 @@ ACCIDENTALS_RE = "[{}]".format("".join(ACCIDENTALS))
 
 KEY_RE = "({})({})?".format(NOTES_RE, ACCIDENTALS_RE)
 
-KEY_OCTAVE_RE = "{}(\d+)".format(KEY_RE)
+KEY_OCTAVE_RE = r"{}(\d+)".format(KEY_RE)
 
 _NOTE_ACCIDENTALS = {
     "A": "b#",
@@ -48,7 +48,7 @@ KEY_NORMALIZATIONS = {
 
 
 @total_ordering
-class Key():
+class Key(object):
 
     def __init__(self, note, accidental=None):
         if note not in NOTES:
@@ -84,8 +84,7 @@ class Key():
     def __lt__(self, okey):
         return (self.note < okey.note or
                 (self.note == okey.note and
-                 self._accidental_lt(self.accidental, okey.accidental)
-                 ))
+                 self._accidental_lt(self.accidental, okey.accidental)))
 
     def __str__(self):
         return self.note + self.accidental if self.accidental else self.note
@@ -122,7 +121,7 @@ class Key():
 
 
 @total_ordering
-class KeyOctave():
+class KeyOctave(object):
 
     def __init__(self, key, octave):
         self._key = key
