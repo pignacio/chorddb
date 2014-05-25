@@ -48,7 +48,7 @@ KEY_NORMALIZATIONS = {
 
 
 @total_ordering
-class Key():
+class Key(object):
 
     def __init__(self, note, accidental=None):
         if note not in NOTES:
@@ -122,7 +122,7 @@ class Key():
 
 
 @total_ordering
-class KeyOctave():
+class KeyOctave(object):
 
     def __init__(self, key, octave):
         self._key = key

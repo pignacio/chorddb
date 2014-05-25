@@ -11,7 +11,7 @@ from chords.drawer import draw_chord
 import collections
 
 
-class SubPad():
+class SubPad(object):
 
     def __init__(self, xpos, ypos, width, height):
         self._pad = curses.newpad(1000, 1000)
@@ -52,7 +52,7 @@ class SubPad():
         return self._height
 
 
-class MainWindow():
+class MainWindow(object):
 
     def __init__(self, curses_screen):
         self._curses_screen = curses_screen
@@ -110,7 +110,7 @@ class MainWindow():
         return self._instruction_pad
 
 
-class CursesRenderer():
+class CursesRenderer(object):
 
     def __init__(self, screen, tab, instrument):
         self._screen = screen
@@ -275,7 +275,7 @@ class CursesRenderer():
             self._write(self._window.instruction_pad, 0, nline, line)
 
 
-class InputProcessor():
+class InputProcessor(object):
     def __init__(self):
         self._rules = collections.defaultdict(list)
 

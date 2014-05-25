@@ -13,7 +13,7 @@ from chords.library import ChordLibrary
 LOGGER = logging.getLogger(__name__)
 
 
-class Tablature():
+class Tablature(object):
 
     def __init__(self, lines):
         self._lines = lines
@@ -33,7 +33,7 @@ class Tablature():
         return self._lines
 
 
-class TablatureLine():
+class TablatureLine(object):
 
     def render(self, debug=False, instrument=None):
         contents = []
@@ -131,7 +131,7 @@ class EmptyLine(TablatureLine):
         return cls()
 
 
-class LineContents():
+class LineContents(object):
 
     def __init__(self, line=None, chords=None):
         self._line = line or ""
@@ -146,7 +146,7 @@ class LineContents():
         return self._chords
 
 
-class TerminalRenderer():
+class TerminalRenderer(object):
 
     def render(self, tablature, chord_library=None):
         for line in tablature.lines:

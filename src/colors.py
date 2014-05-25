@@ -8,7 +8,7 @@ import StringIO
 import curses
 
 
-class ColoredOutput():
+class ColoredOutput(object):
     __INIT = init()
 
     def __init__(self, fore=Fore.WHITE, back=Back.BLACK, style=Style.NORMAL):
@@ -56,7 +56,7 @@ class ColoredOutput():
         return output.getvalue()
 
 
-class CursesColors():
+class CursesColors(object):
     CURSES_DEFAULT_COLOR = 0
     CURSES_CHORD_COLOR = 1
     CURSES_FINGERING_COLOR = 2

@@ -8,7 +8,7 @@ from utils.decorators import memoize
 import logging
 
 
-class ChordLibrary():
+class ChordLibrary(object):
 
     def __init__(self, instrument):
         self._instrument = instrument

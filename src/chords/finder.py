@@ -9,7 +9,7 @@ import itertools
 from utils.decorators import memoize
 
 
-class ChordFinder():
+class ChordFinder(object):
 
     def __init__(self, instrument, chord):
         self._instrument = instrument
@@ -81,7 +81,7 @@ def _min(fingering):
     return min(x[0] for x in fingering if x[0] > 0)
 
 
-class Fingering():
+class Fingering(object):
 
     def __init__(self, positions, instrument, start=None):
         self._instrument = instrument

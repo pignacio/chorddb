@@ -1,7 +1,7 @@
 from notes import KeyOctave, Key
 
 
-class Instrument():
+class Instrument(object):
 
     def __init__(self, keyoctaves, frets, has_bass=True):
         self._keyoctaves = keyoctaves

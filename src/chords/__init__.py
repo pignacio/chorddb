@@ -15,7 +15,7 @@ CHORD_RE = "(({})({})?({})?)".format(notes.NOTES_RE, notes.ACCIDENTALS_RE,
                                      VARIATIONS_RE)
 
 
-class Chord():
+class Chord(object):
 
     def __init__(self, key, variation=None):
         self._key = key
