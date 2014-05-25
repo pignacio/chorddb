@@ -7,12 +7,18 @@ Created on May 25, 2014
 from nose.tools import raises, eq_, ok_
 
 from notes import Key
+import itertools
 
 _NOTES = "ABCDEFG"
 _KEYS = ["A", "A#", "B", "C", "C#", "D", "D#", "E", "F", "F#", "G", "G#"]
 
 
 # Helpers
+
+
+def _keys():
+    ''' Parse all valid keys '''
+    return [Key.parse(k) for k in _KEYS]
 
 
 @raises(ValueError, TypeError)
@@ -34,7 +40,7 @@ def note_parse_test():
 
 
 def invalid_key_value_parse_test():
-    ''' Check' we don't parse invalid stuff '''
+    ''' Check we don't parse invalid Keys '''
     for note in ["H", "a", "b", 1, [], {}, None]:
         yield invalid_key_parse, note
 
@@ -59,9 +65,8 @@ def key_normalization_test():
 
 
 def key_ord_test():
-    ''' Key.ord/Key.from_ord consistency test '''
-    for skey in _KEYS:
-        key = Key.parse(skey)
+    ''' Check Key.ord/Key.from_ord consistency '''
+    for key in _keys():
         eq_(key, Key.from_ord(key.ord()))
 
 
@@ -72,17 +77,16 @@ def key_eq_test():
 
 
 def key_order_test():
-    ''' Checks key ordering '''
-    keys = [Key.parse(k) for k in _KEYS]
-    for index, key in enumerate(keys):
-        for okey in keys[index + 1:]:
-            ok_(key < okey)
-            ok_(key.ord() < okey.ord())
+    ''' Check Key ordering '''
+    for key, okey in itertools.combinations(_keys(), 2):
+        ok_(key < okey)
+        ok_(key != okey)
+        ok_(key.ord() < okey.ord())
 
 
 def key_transpose_test():
-    ''' Check transpositions work '''
-    keys = [Key.parse(k) for k in _KEYS]
+    ''' Check Key transpositions work '''
+    keys = _keys()
     for index, key in enumerate(keys):
         for interval in xrange(25):
             nindex = (interval + index) % len(keys)
