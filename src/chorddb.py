@@ -3,7 +3,7 @@ import curses
 import logging
 import os
 
-from colors import CursesColors
+from colors.curse import CursesColors
 from tab import Tablature, TerminalRenderer
 from window import CursesRenderer
 from instrument import UKELELE, Instrument

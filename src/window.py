@@ -5,7 +5,7 @@ Created on May 21, 2014
 '''
 
 import curses
-from colors import CursesColors
+from colors.curse import CursesColors
 from chords.library import ChordLibrary
 from chords.drawer import draw_chord
 import collections
