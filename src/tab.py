@@ -97,7 +97,7 @@ class ChordLine(TablatureLine):
     @classmethod
     def from_line(cls, line):
         chordpos = Chord.extract_chordpos(line)
-        chords, positions = (list(x) for x in zip(chordpos[0], chordpos[1]))
+        chords, positions = (list(x) for x in zip(*chordpos))
         return cls(chords, positions)
 
 
