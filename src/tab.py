@@ -60,8 +60,8 @@ class TablatureLine(object):
         stripped = line.strip()
         if not stripped:
             return EmptyLine
-        remainder = re.sub("\s+", " ", re.sub(CHORD_RE, "", stripped))
-        if len(remainder) * 2 < len(re.sub("\s+", " ", stripped)):
+        remainder = re.sub(r"\s+", " ", re.sub(CHORD_RE, "", stripped))
+        if len(remainder) * 2 < len(re.sub(r"\s+", " ", stripped)):
             return ChordLine
         return LyricLine
 
@@ -85,9 +85,9 @@ class ChordLine(TablatureLine):
             if buff.tell() < pos:
                 buff.write(" " * (pos - buff.tell()))
             buff.write(chord.text(), style=colors.Style.BRIGHT)
-            c = ChordLibrary(instrument).get(chord)
-            if c:
-                buff.write("({})".format(c), fore=colors.Fore.RED)
+            fingering = ChordLibrary(instrument).get(chord)
+            if fingering:
+                buff.write("({})".format(fingering), fore=colors.Fore.RED)
             buff.write(" ")
         return buff.getvalue().rstrip()
 
@@ -97,7 +97,7 @@ class ChordLine(TablatureLine):
     @classmethod
     def from_line(cls, line):
         chordpos = Chord.extract_chordpos(line)
-        chords, positions = (list(x) for x in zip(*chordpos))
+        chords, positions = (list(x) for x in zip(chordpos[0], chordpos[1]))
         return cls(chords, positions)
 
 
@@ -159,20 +159,22 @@ class TerminalRenderer(object):
         else:
             print self._render_text(contents)
 
-    def _render_text(self, contents):
+    @staticmethod
+    def _render_text(contents):
         return contents.line
 
-    def _render_chords(self, contents, chord_library):
+    @staticmethod
+    def _render_chords(contents, chord_library):
         buff = colors.ColoredOutput(fore=colors.Fore.CYAN)
         for chord, pos in contents.chords:
             if buff.tell() < pos:
                 buff.write(" " * (pos - buff.tell()))
             buff.write(chord.text(), style=colors.Style.BRIGHT)
             if chord_library:
-                c = chord_library.get(chord)
+                fingering = chord_library.get(chord)
             else:
-                c = None
-            if c:
-                buff.write("({})".format(c), fore=colors.Fore.RED)
+                fingering = None
+            if fingering:
+                buff.write("({})".format(fingering), fore=colors.Fore.RED)
             buff.write(" ")
         return buff.getvalue().rstrip()

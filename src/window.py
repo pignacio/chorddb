@@ -236,7 +236,8 @@ class CursesRenderer(object):
             return fingerings[version]
         return None
 
-    def _write(self, subpad, xpos, ypos, text, color_id=0, attr=0):
+    @staticmethod
+    def _write(subpad, xpos, ypos, text, color_id=0, attr=0):
         subpad.pad.addstr(ypos, xpos, text, curses.color_pair(color_id) | attr)
 
     def _get_input_processor(self):

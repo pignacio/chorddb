@@ -21,7 +21,7 @@ ACCIDENTALS_RE = "[{}]".format("".join(ACCIDENTALS))
 
 KEY_RE = "({})({})?".format(NOTES_RE, ACCIDENTALS_RE)
 
-KEY_OCTAVE_RE = "{}(\d+)".format(KEY_RE)
+KEY_OCTAVE_RE = r"{}(\d+)".format(KEY_RE)
 
 _NOTE_ACCIDENTALS = {
     "A": "b#",
@@ -84,8 +84,7 @@ class Key(object):
     def __lt__(self, okey):
         return (self.note < okey.note or
                 (self.note == okey.note and
-                 self._accidental_lt(self.accidental, okey.accidental)
-                 ))
+                 self._accidental_lt(self.accidental, okey.accidental)))
 
     def __str__(self):
         return self.note + self.accidental if self.accidental else self.note
