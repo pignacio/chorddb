@@ -183,5 +183,5 @@ def _normalize(note, accidental):
     if accidental:
         key = note + accidental
         nkey = KEY_NORMALIZATIONS.get(key, key)
-        note, accidental = nkey
+        note, accidental = nkey if len(nkey) > 1 else nkey, None
     return note, accidental
