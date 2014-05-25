@@ -241,14 +241,16 @@ class CursesRenderer():
 
     def _get_input_processor(self):
         processor = InputProcessor()
-        processor.add_case_insensitive_rule('n', lambda: self._move_selected_chord(1))
-        processor.add_case_insensitive_rule('b', lambda: self._move_selected_chord(-1))
-        processor.add_case_insensitive_rule('j', lambda: self._move_chord_version(self._selected_chord, 1))
-        processor.add_case_insensitive_rule('h', lambda: self._move_chord_version(self._selected_chord, -1))
-        processor.add_case_insensitive_rule('r', self._reverse_chord_orientation)
-        processor.add_case_insensitive_rule('q', self._do_quit)
-        processor.add_rule(curses.KEY_DOWN, lambda: self._move_lyrics_vertical_scroll(1))
-        processor.add_rule(curses.KEY_UP, lambda: self._move_lyrics_vertical_scroll(-1))
+        cirule = processor.add_case_insensitive_rule
+        add_rule = processor.add_rule
+        cirule('n', lambda: self._move_selected_chord(1))
+        cirule('b', lambda: self._move_selected_chord(-1))
+        cirule('j', lambda: self._move_chord_version(self._selected_chord, 1))
+        cirule('h', lambda: self._move_chord_version(self._selected_chord, -1))
+        cirule('r', self._reverse_chord_orientation)
+        cirule('q', self._do_quit)
+        add_rule(curses.KEY_DOWN, lambda: self._move_lyrics_vertical_scroll(1))
+        add_rule(curses.KEY_UP, lambda: self._move_lyrics_vertical_scroll(-1))
         return processor
 
     def _reverse_chord_orientation(self):
