@@ -5,7 +5,7 @@ Created on May 21, 2014
 '''
 
 import curses
-from colors.curse import CursesColors
+import colors
 from chords.library import ChordLibrary
 from chords.drawer import draw_chord
 import collections
@@ -183,12 +183,12 @@ class CursesRenderer(object):
         for nchord, (chord, pos) in enumerate(contents.chords):
             cursor = max(cursor, pos)
             text = chord.text()
-            attr = curses.A_BOLD
+            attr = colors.curse.BOLD
             if (ypos, nchord) == self._all_chords[self._selected_chord_index]:
-                attr |= curses.A_STANDOUT
+                attr |= colors.curse.STANDOUT
             self._write(self._window.lyrics_pad,
                         cursor, ypos, text,
-                        CursesColors.CURSES_CHORD_COLOR,
+                        colors.curse.CHORD_COLOR,
                         attr)
             cursor += len(text)
             fingering = self._get_fingering(chord)
@@ -196,7 +196,7 @@ class CursesRenderer(object):
                 text = "({})".format(fingering)
                 self._write(self._window.lyrics_pad,
                             cursor, ypos, text,
-                            CursesColors.CURSES_FINGERING_COLOR,
+                            colors.curse.FINGERING_COLOR,
                             attr)
                 cursor += len(text)
 
@@ -218,10 +218,10 @@ class CursesRenderer(object):
             for nline, line in enumerate(lines):
                 for nchar, char in enumerate(line):
                     if char in ['o', 'x']:
-                        color = CursesColors.CURSES_FINGERING_COLOR
-                        attr = curses.A_BOLD
+                        color = colors.curse.FINGERING_COLOR
+                        attr = colors.curse.BOLD
                     else:
-                        color = CursesColors.CURSES_DEFAULT_COLOR
+                        color = colors.curse.DEFAULT_COLOR
                         attr = 0
                     self._write(self._window.chord_pad, nchar, 3 + nline, char,
                                 color, attr)

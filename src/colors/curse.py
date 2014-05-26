@@ -1,21 +1,19 @@
 import curses
 
 
-class CursesColors(object):
-    CURSES_DEFAULT_COLOR = 0
-    CURSES_CHORD_COLOR = 1
-    CURSES_FINGERING_COLOR = 2
+BOLD = curses.A_BOLD
+STANDOUT = curses.A_STANDOUT
 
-    _INITED = False
+DEFAULT_COLOR = 0
+CHORD_COLOR = 1
+FINGERING_COLOR = 2
 
-    _COLORS_DEFINITIONS = {
-        CURSES_CHORD_COLOR: [curses.COLOR_CYAN, curses.COLOR_BLACK],
-        CURSES_FINGERING_COLOR: [curses.COLOR_RED, curses.COLOR_BLACK],
-    }
+_COLORS_DEFINITIONS = {
+    CHORD_COLOR: [curses.COLOR_CYAN, curses.COLOR_BLACK],
+    FINGERING_COLOR: [curses.COLOR_RED, curses.COLOR_BLACK],
+}
 
-    @classmethod
-    def init(cls):
-        if not cls._INITED:
-            for color_id, color_pair in cls._COLORS_DEFINITIONS.items():
-                curses.init_pair(color_id, color_pair[0], color_pair[1])
-            cls._INITED = True
+
+def init():
+    for color_id, color_pair in _COLORS_DEFINITIONS.items():
+        curses.init_pair(color_id, color_pair[0], color_pair[1])
