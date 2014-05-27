@@ -148,7 +148,8 @@ class LineContents(object):
 
 class TerminalRenderer(object):
 
-    def render(self, tablature, chord_library=None):
+    def render(self, tablature, instrument=None):
+        chord_library = ChordLibrary(instrument) if instrument else None
         for line in tablature.lines:
             self._render_line(line, chord_library=chord_library)
 
