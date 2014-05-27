@@ -3,7 +3,7 @@ import curses
 import logging
 import os
 
-from colors import CursesColors
+import colors
 from tab import Tablature, TerminalRenderer
 from window import CursesRenderer
 from instrument import UKELELE, Instrument
@@ -41,7 +41,7 @@ def _parse_tablature(filename, instrument, use_curses):
 
 
 def _render_tablature_with_curses(stdscr, tab, instrument):
-    CursesColors.init()
+    colors.curse.init()
     CursesRenderer(stdscr, tab, instrument).run()
 
 
