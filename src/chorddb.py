@@ -37,7 +37,7 @@ def _parse_tablature(filename, instrument, use_curses):
         render = lambda s: _render_tablature_with_curses(s, tab, instrument)
         curses.wrapper(render)
     else:
-        TerminalRenderer().render(tab, chord_library=None)
+        TerminalRenderer().render(tab, instrument)
 
 
 def _render_tablature_with_curses(stdscr, tab, instrument):

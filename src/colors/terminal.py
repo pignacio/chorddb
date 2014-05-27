@@ -37,6 +37,7 @@ WHITE = TerminalColor(colorama.Fore.WHITE,  # pylint: disable=no-member
 RESET = TerminalColor(colorama.Fore.RESET,  # pylint: disable=no-member
                       colorama.Back.RESET)  # pylint: disable=no-member
 
+NULL = TerminalColor('', '')
 
 DIM = colorama.Style.DIM  # pylint: disable=no-member
 NORMAL = colorama.Style.NORMAL  # pylint: disable=no-member
@@ -52,10 +53,11 @@ class ColoredOutput(object):
         self.switch(fore, back, style)
         self._tell = 0
 
-    def write(self, msg, fore=None, back=None, style=None):
+    def write(self, msg, fore=NULL, back=NULL, style=None):
         # Apply style
         self._reset()
-        self._buffer.write("".join([x or '' for x in [fore, back, style]]))
+        self._buffer.write("".join([x or '' for x in [fore.fore, back.back,
+                                                      style]]))
 
         # Write message
         self._buffer.write(msg)
@@ -64,7 +66,7 @@ class ColoredOutput(object):
         # Reset style
         self._reset()
 
-    def line(self, msg, fore=None, back=None, style=None):
+    def line(self, msg, fore=NULL, back=NULL, style=None):
         return self.write(msg + "\n", fore=fore, back=back, style=style)
 
     def switch(self, fore=None, back=None, style=None):
