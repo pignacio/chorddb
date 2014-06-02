@@ -17,9 +17,10 @@ CHORD_RE = "(({})({})?({})?)".format(notes.NOTES_RE, notes.ACCIDENTALS_RE,
 
 class Chord(object):
 
-    def __init__(self, key, variation=None):
+    def __init__(self, key, variation=None, bass=None):
         self._key = key
         self._variation = variation
+        self._bass = bass or self._key
 
     @property
     def key(self):
@@ -37,14 +38,20 @@ class Chord(object):
     def variation(self):
         return self._variation
 
+    @property
+    def bass(self):
+        return self._bass
+
     @memoize
     def variation_keys(self):
         return set([self.key.transpose(interval)
                     for interval in VARIATIONS_NOTES[self.variation]])
 
     def text(self):
-        return "{}{}".format(self._key,
-                             self._variation if self._variation else "")
+        bass = '' if self._key == self._bass else "/{}".format(self._bass)
+        return "{}{}{}".format(self._key,
+                               self._variation if self._variation else "",
+                               bass)
 
     def __str__(self):
         return "Chord:{}".format(self.text())
@@ -53,12 +60,13 @@ class Chord(object):
         return Chord(self._key.transpose(interval), self._variation)
 
     def __hash__(self):
-        return hash((self._key, self._variation))
+        return hash((self._key, self._variation, self.bass))
 
     def __eq__(self, ochord):
         return (isinstance(ochord, Chord) and
                 self.key == ochord.key and
-                self.variation == ochord.variation)
+                self.variation == ochord.variation and
+                self.bass == ochord.bass)
 
     @classmethod
     def parse(cls, text):
