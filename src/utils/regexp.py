@@ -15,7 +15,7 @@ def strict(regexp):
 class NoMatchError(ValueError):
 
     def __init__(self, pattern, string):
-        ValueError.__init__("Could not match pattern:'{}' "
+        ValueError.__init__(self, "Could not match pattern:'{}' "
                             "to string:'{}'".format(pattern, string))
         self._pattern = pattern
         self._string = string

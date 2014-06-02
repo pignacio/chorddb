@@ -3,9 +3,10 @@ Created on May 10, 2014
 
 @author: ignacio
 '''
-from utils.regexp import strict, re_search
 from functools import total_ordering
+
 from utils.decorators import memoize
+from utils.regexp import strict, re_search
 
 # Some definitions for posterity:
 # - Note: ABCDEFG
@@ -183,5 +184,5 @@ def _normalize(note, accidental):
     if accidental:
         key = note + accidental
         nkey = KEY_NORMALIZATIONS.get(key, key)
-        note, accidental = nkey
+        note, accidental = nkey if len(nkey) > 1 else nkey, None
     return note, accidental
