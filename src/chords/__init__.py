@@ -54,6 +54,10 @@ class Chord(object):
                                self._variation if self._variation else "",
                                bass)
 
+    def bassless(self):
+        ''' The same chord, but without bass '''
+        return Chord(self._key, self._variation)
+
     def __str__(self):
         return "Chord:{}".format(self.text())
 

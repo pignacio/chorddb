@@ -9,8 +9,9 @@ class ChordFinder(object):
 
     def __init__(self, instrument, chord):
         self._instrument = instrument
-        self._chord = chord
+        self._chord = chord if instrument.has_bass else chord.bassless()
         self._keys = chord.variation_keys()
+        self._keys.add(chord.bass)
         self._res = []
         self._string_notes = self._get_string_notes()
         self._search()
@@ -63,9 +64,17 @@ class ChordFinder(object):
 
 
 def get_fingerings(chord, instrument):
+    if not instrument.has_bass:
+        chord = chord.bassless()  # Remove bass if present
     for fingering in ChordFinder.find(instrument, chord):
-        if instrument.has_bass and fingering.bass().key != chord.key:
-            continue
+        if instrument.has_bass:
+            if fingering.bass().key != chord.bass:
+                continue
+            if chord.bass not in chord.variation_keys():
+                bass_count = len([ko for ko in fingering.keyoctaves()
+                                 if ko.key == chord.bass])
+                if bass_count > 1:
+                    continue
         yield fingering
 
 
