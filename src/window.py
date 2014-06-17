@@ -298,8 +298,8 @@ INSTRUCTIONS = """
  INSTRUCTIONS/KEYBINDINGS
 
 
- b - move to next chord in song
- v - move to previous chord in song
+ n - move to next chord in song
+ b - move to previous chord in song
  j - move to next current chord
      version
  h - move to previous current chord
