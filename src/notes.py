@@ -20,9 +20,11 @@ NOTES_RE = "[{}]".format("".join(NOTES))
 ACCIDENTALS = ["b", "#"]
 ACCIDENTALS_RE = "[{}]".format("".join(ACCIDENTALS))
 
-KEY_RE = "({})({})?".format(NOTES_RE, ACCIDENTALS_RE)
+KEY_RE = "{}(?:{})?".format(NOTES_RE, ACCIDENTALS_RE)
+_CAPTURING_KEY_RE = "({})({})?".format(NOTES_RE, ACCIDENTALS_RE)
 
-KEY_OCTAVE_RE = r"{}(\d+)".format(KEY_RE)
+KEY_OCTAVE_RE = r"{}\d+".format(KEY_RE)
+_CAPTURING_KEY_OCTAVE_RE = r"({})(\d+)".format(KEY_RE)
 
 _NOTE_ACCIDENTALS = {
     "A": "b#",
@@ -95,7 +97,7 @@ class Key(object):
 
     @classmethod
     def parse(cls, key):
-        note, accidental = re_search(strict(KEY_RE), key).groups()
+        note, accidental = re_search(strict(_CAPTURING_KEY_RE), key).groups()
         return cls(note, accidental)
 
     @classmethod
@@ -175,9 +177,9 @@ class KeyOctave(object):
 
     @classmethod
     def parse(cls, key_octave):
-        note, accidental, octave = re_search(strict(KEY_OCTAVE_RE),
-                                             key_octave).groups()
-        return cls(Key(note, accidental), int(octave))
+        key, octave = re_search(strict(_CAPTURING_KEY_OCTAVE_RE),
+                                key_octave).groups()
+        return cls(Key.parse(key), int(octave))
 
 
 def _normalize(note, accidental):

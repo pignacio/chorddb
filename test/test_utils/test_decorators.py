@@ -81,3 +81,20 @@ def unhashable_memoize_test():
     values = [4, 2, 3, 1]
     for dummy in xrange(5):
         eq_(sort(values), sorted(values))
+
+
+def memoize_cache_immutability_test():
+    ''' Test if @memoize cache is immutable '''
+    numbers = set([1,2,3,4])
+    resp = set(numbers)
+
+    @memoize
+    def func():
+        return resp
+
+    for _x in xrange(2):
+        cached = func()
+        eq_(cached, numbers)
+        cached.add(5)
+
+    eq_(func(), numbers)
