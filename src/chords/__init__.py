@@ -41,8 +41,9 @@ class Chord(object):
                     for interval in VARIATIONS_NOTES[self.variation]])
 
     def text(self):
-        bass = '' if self._key == self._bass else "/{}".format(self._bass)
-        return "{}{}{}".format(self._key,
+        bass = ('' if self._key == self._bass
+                else "/{}".format(self._bass.text()))
+        return "{}{}{}".format(self._key.text(),
                                self._variation if self._variation else "",
                                bass)
 

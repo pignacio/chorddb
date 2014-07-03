@@ -89,6 +89,9 @@ class Key(object):
                  self._accidental_lt(self.accidental, okey.accidental)))
 
     def __str__(self):
+        return "Key:{}".format(self.text())
+
+    def text(self):
         return self.note + self.accidental if self.accidental else self.note
 
     def __hash__(self):
@@ -161,7 +164,10 @@ class KeyOctave(object):
                 (self.octave == okey.octave and self.key < okey.key))
 
     def __str__(self):
-        return "{}{}".format(self._key, self._octave)
+        return "KeyOctave:{}".format(self.text())
+
+    def text(self):
+        return "{}{}".format(self._key.text(), self._octave)
 
     def __hash__(self):
         return hash((self._key, self._octave,))

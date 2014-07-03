@@ -41,7 +41,7 @@ def invalid_key_construct(note, accidental=None):
 
 
 def _check_key_str_parse(key):
-    eq_(key, Key.parse(str(key)))
+    eq_(key, Key.parse(key.text()))
 
 
 # / Helpers
