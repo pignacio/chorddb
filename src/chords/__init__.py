@@ -66,6 +66,9 @@ class Chord(object):
                 self.variation == ochord.variation and
                 self.bass == ochord.bass)
 
+    def __ne__(self, ochord):
+        return not self == ochord
+
     @classmethod
     def parse(cls, text):
         mobj = re_search(strict(_CAPTURING_CHORD_RE), text)
