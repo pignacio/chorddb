@@ -59,7 +59,6 @@ class Key(object):
         if accidental and accidental not in ACCIDENTALS:
             raise ValueError("Invalid accidental: '{}'".format(accidental))
         note, accidental = _normalize(note, accidental)
-
         self._note = note
         self._accidental = accidental
 
@@ -178,5 +177,5 @@ def _normalize(note, accidental):
     if accidental:
         key = note + accidental
         nkey = KEY_NORMALIZATIONS.get(key, key)
-        note, accidental = nkey if len(nkey) > 1 else nkey, None
+        note, accidental = nkey if len(nkey) > 1 else (nkey, None)
     return note, accidental
