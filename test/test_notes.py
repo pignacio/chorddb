@@ -14,6 +14,8 @@ _KEYS = ["A", "A#", "B", "C", "C#", "D", "D#", "E", "F", "F#", "G", "G#"]
 _KEYOCTAVES = ["{}{}".format(__key, __octave)
                for __octave in xrange(6) for __key in _KEYS]
 
+_INVALID_NOTES = ["H", "a", "b", 1, [], {}, None]
+_INVALID_ACCIDENTALS = ['.', '!', 'B', '*', '%']
 
 # Helpers
 
@@ -33,6 +35,15 @@ def invalid_key_parse(key):
     Key.parse(key)
 
 
+@raises(ValueError)
+def invalid_key_construct(note, accidental=None):
+    Key(note, accidental=accidental)
+
+
+def _check_key_str_parse(key):
+    eq_(key, Key.parse(str(key)))
+
+
 # / Helpers
 # Key tests
 
@@ -43,24 +54,37 @@ def note_parse_test():
         parsed = Key.parse(note)
         eq_(parsed.note, note)
         eq_(parsed.accidental, None)
+        _check_key_str_parse(parsed)
 
 
 def invalid_key_value_parse_test():
     ''' Check we don't parse invalid Keys '''
-    for note in ["H", "a", "b", 1, [], {}, None]:
+    for note in _INVALID_NOTES:
         yield invalid_key_parse, note
+
+
+def invalid_key_construct_test():
+    ''' Check we cant't construct invalid Keys '''
+    for note in _INVALID_NOTES:
+        yield invalid_key_construct, note
+    for accidental in _INVALID_ACCIDENTALS:
+        yield invalid_key_construct, "A", accidental
 
 
 def sharp_parse_test():
     ''' Check sharp parsing '''
     for note in _NOTES:
-        Key.parse(note + "#")
+        parsed = Key.parse(note + "#")
+        eq_(Key.parse(note).transpose(1), parsed)
+        _check_key_str_parse(parsed)
 
 
 def flat_parse_test():
     ''' Check flat parsing '''
     for note in _NOTES:
-        Key.parse(note + "b")
+        parsed = Key.parse(note + "b")
+        eq_(Key.parse(note).transpose(-1), parsed)
+        _check_key_str_parse(parsed)
 
 
 def key_normalization_test():
