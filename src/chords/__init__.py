@@ -28,14 +28,6 @@ class Chord(object):
         return self._key
 
     @property
-    def note(self):
-        return self._key.note
-
-    @property
-    def accidental(self):
-        return self._key.accidental
-
-    @property
     def variation(self):
         return self._variation
 
