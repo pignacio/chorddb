@@ -47,7 +47,7 @@ def draw_chord(fingering, reverse=True):
 
 
 def _line_start(char, keyoctave):
-    return " {:3} {}||".format(keyoctave, char)
+    return " {:3} {}||".format(keyoctave.text(), char)
 
 
 def _fret(touched):

@@ -16,7 +16,7 @@ def _check_text_parsing(chord):
 def basic_chord_parse_test():
     """ Parse chords with no variations """
     for key in _KEYS:
-        parsed = Chord.parse(str(key))
+        parsed = Chord.parse(key.text())
         eq_(parsed.key, key)
         eq_(parsed.variation, None)
         eq_(parsed.bass, key)
@@ -27,7 +27,7 @@ def variation_chord_parse_test():
     """ Parse chords with variations """
     for key in _KEYS:
         for variation in _VARIATIONS:
-            parsed = Chord.parse(str(key) + variation)
+            parsed = Chord.parse(key.text() + variation)
             eq_(parsed.key, key)
             eq_(parsed.variation, variation)
             eq_(parsed.bass, key)
@@ -39,7 +39,8 @@ def bass_chord_parse_test():
     for key in _KEYS:
         for variation in _VARIATIONS + ['']:
             for bass in _KEYS:
-                parsed = Chord.parse(str(key) + variation + "/" + str(bass))
+                text = key.text() + variation + "/" + bass.text()
+                parsed = Chord.parse(text)
                 eq_(parsed.key, key)
                 eq_(parsed.variation, variation if variation else None)
                 eq_(parsed.bass, bass)
