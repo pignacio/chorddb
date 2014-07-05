@@ -3,8 +3,8 @@ Created on May 21, 2014
 
 @author: ignacio
 '''
-from chords.finder import get_fingering_penalty, get_fingerings
-from utils.decorators import memoize
+from .finder import get_fingering_penalty, get_fingerings
+from ..utils.decorators import memoize
 
 
 class ChordLibrary(object):

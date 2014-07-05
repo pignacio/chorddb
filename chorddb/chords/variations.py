@@ -3,7 +3,7 @@ Created on May 17, 2014
 
 @author: ignacio
 '''
-from notes import Key
+from ..notes import Key
 
 
 _VARIATIONS_NOTES = {

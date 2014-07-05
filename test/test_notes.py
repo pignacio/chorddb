@@ -4,10 +4,11 @@ Created on May 25, 2014
 @author: ignacio
 '''
 
+import itertools
 from nose.tools import raises, eq_, ok_
 
-from notes import Key, KeyOctave
-import itertools
+from chorddb.notes import Key, KeyOctave
+
 
 _NOTES = "ABCDEFG"
 _KEYS = ["A", "A#", "B", "C", "C#", "D", "D#", "E", "F", "F#", "G", "G#"]

@@ -3,12 +3,14 @@ Created on May 10, 2014
 
 @author: ignacio
 '''
-from chords import CHORD_RE, Chord
-import StringIO
-import colors
 import logging
 import re
-from chords.library import ChordLibrary
+import StringIO
+
+from . import colors
+from .chords import CHORD_RE, Chord
+from .chords.library import ChordLibrary
+
 
 LOGGER = logging.getLogger(__name__)
 

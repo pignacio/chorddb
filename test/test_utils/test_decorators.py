@@ -5,7 +5,7 @@ import itertools
 
 from nose.tools import eq_
 
-from utils.decorators import memoize
+from chorddb.utils.decorators import memoize
 
 
 class CallCounter(object):

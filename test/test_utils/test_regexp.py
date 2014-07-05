@@ -4,7 +4,7 @@ Unit tests for utils.regexp
 
 from nose.tools import ok_, raises, eq_
 
-from utils.regexp import NoMatchError, re_search, strict
+from chorddb.utils.regexp import NoMatchError, re_search, strict
 
 
 @raises(NoMatchError)
