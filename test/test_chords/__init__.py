@@ -1,8 +1,8 @@
 import random
 from nose.tools import eq_
 
-from chords import Chord
-from notes import Key
+from chorddb.chords import Chord
+from chorddb.notes import Key
 
 __KEYS = ["A", "A#", "B", "C", "C#", "D", "D#", "E", "F", "F#", "G", "G#"]
 _KEYS = [Key.parse(k) for k in __KEYS]
