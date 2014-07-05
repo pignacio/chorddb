@@ -5,8 +5,8 @@ Created on May 10, 2014
 '''
 from functools import total_ordering
 
-from utils.decorators import memoize
-from utils.regexp import strict, re_search
+from .utils.decorators import memoize
+from .utils.regexp import strict, re_search
 
 # Some definitions for posterity:
 # - Note: ABCDEFG

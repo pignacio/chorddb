@@ -4,11 +4,10 @@ Created on May 10, 2014
 @author: ignacio
 '''
 import re
-import notes
-from notes import Key, KEY_RE
-from utils.decorators import memoize
-from utils.regexp import strict, re_search
-from chords.variations import VARIATIONS_RE, VARIATIONS, VARIATIONS_NOTES
+from ..notes import Key, KEY_RE
+from ..utils.decorators import memoize
+from ..utils.regexp import strict, re_search
+from .variations import VARIATIONS_RE, VARIATIONS, VARIATIONS_NOTES
 
 
 CHORD_RE = "{}(?:{})?(?:/{})?".format(KEY_RE, VARIATIONS_RE, KEY_RE)

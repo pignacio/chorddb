@@ -4,11 +4,12 @@ Created on May 21, 2014
 @author: ignacio
 '''
 
-import curses
-import colors
-from chords.library import ChordLibrary
-from chords.drawer import draw_chord
 import collections
+
+from . import curses
+from . import colors
+from .chords.library import ChordLibrary
+from .chords.drawer import draw_chord
 
 
 class SubPad(object):

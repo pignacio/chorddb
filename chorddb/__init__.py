@@ -3,10 +3,10 @@ import curses
 import logging
 import os
 
-import colors
-from tab import Tablature, TerminalRenderer
-from window import CursesRenderer
-from instrument import UKELELE, Instrument
+from . import colors
+from .tab import Tablature, TerminalRenderer
+from .window import CursesRenderer
+from .instrument import UKELELE, Instrument
 
 
 def _get_arg_parser():

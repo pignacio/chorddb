@@ -1,4 +1,4 @@
-from notes import KeyOctave, Key
+from .notes import KeyOctave, Key
 
 
 class Instrument(object):
