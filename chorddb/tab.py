@@ -27,8 +27,9 @@ class Tablature(object):
         return res.getvalue()
 
     @classmethod
-    def parse(cls, lines):
-        return cls([TablatureLine.from_line(l.rstrip("\n")) for l in lines])
+    def parse(cls, lines, transpose=0):
+        parsed_lines = [TablatureLine.from_line(l.rstrip("\n")) for l in lines]
+        return cls([l.transpose(transpose) for l in parsed_lines])
 
     @property
     def lines(self):
@@ -52,6 +53,9 @@ class TablatureLine(object):
 
     def contents(self):
         raise NotImplementedError()
+
+    def transpose(self, interval):
+        return self
 
     @classmethod
     def from_line(cls, line):
@@ -101,6 +105,10 @@ class ChordLine(TablatureLine):
         chordpos = Chord.extract_chordpos(line)
         chords, positions = (list(x) for x in zip(*chordpos))
         return cls(chords, positions)
+
+    def transpose(self, interval):
+        chords = [c.transpose(interval) for c in self._chords]
+        return ChordLine(chords, self._positions)
 
 
 class LyricLine(TablatureLine):
