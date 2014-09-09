@@ -15,6 +15,8 @@ _VARIATIONS_NOTES = {
     "dim": ["A", "C", "Eb"],
     "aug": ["A", "C#", "F"],
     "sus4": ["A", "D", "E"],
+    "m7": ["A", "C", "E", "G"],
+    "m7b5": ["A", "C", "Eb", "G"],
 }
 VARIATIONS_NOTES = {v: [Key.parse(n).ord() for n in ns]
                     for (v, ns) in _VARIATIONS_NOTES.items()}
