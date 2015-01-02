@@ -2,7 +2,6 @@ from .notes import KeyOctave, Key
 
 
 class Instrument(object):
-
     def __init__(self, keyoctaves, frets, has_bass=True):
         self._keyoctaves = keyoctaves
         self._frets = frets
@@ -45,6 +44,14 @@ class Instrument(object):
 
     def __len__(self):
         return len(self._keyoctaves)
+
+    def capo(self, capo_position):
+        return Instrument(
+            [ko.transpose(capo_position) for ko in self.keyoctaves],
+            self.frets - capo_position,
+            self.has_bass
+        )
+
 
 GUITAR = Instrument.parse([Key(k) for k in list("EADGBE")], 10, has_bass=True)
 LOOG = Instrument.parse([Key(k) for k in list("GBE")], 10, has_bass=False)

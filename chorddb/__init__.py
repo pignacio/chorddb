@@ -24,17 +24,23 @@ def add_parsers(subparsers):
                         help='file to parse tablature from')
     parser.add_argument('-i', '--instrument', action='store', default=None,
                         help='Instrument to fetch chords for')
+    parser.add_argument('-t', '--transpose', action='store', type=int, default=0,
+                        help='Number of steps to transpose the tab. Defaults to 0')
+    parser.add_argument('-c', '--capo', action='store', type=int, default=0,
+                        help='Capo position for the instrument. Defaults to 0')
     parser.add_argument("--curses",
                         action='store_true', dest='use_curses', default=False,
                         help="Use curses to show tablature")
     parser.set_defaults(func=_parse_tablature)
 
 
-def _parse_tablature(filename, instrument, use_curses):
+def _parse_tablature(filename, instrument, use_curses, transpose, capo):
     if not os.path.isfile(filename):
         raise ValueError("'{}' is not a valid file".format(filename))
     instrument = Instrument.from_name(instrument, UKELELE)
-    tab = Tablature.parse(open(filename).readlines())
+    if capo:
+        instrument = instrument.capo(capo)
+    tab = Tablature.parse(open(filename).readlines(), transpose=transpose)
     if use_curses:
         render = lambda s: _render_tablature_with_curses(s, tab, instrument)
         curses.wrapper(render)
