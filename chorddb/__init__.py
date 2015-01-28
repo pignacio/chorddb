@@ -5,8 +5,8 @@ import curses
 import logging
 import os
 
-from . import colors
-from .tab import Tablature, TerminalRenderer
+from . import colors, terminal
+from .tab import parse_tablature, transpose_tablature
 from .window import CursesRenderer
 from .instrument import UKELELE, Instrument
 
@@ -24,8 +24,9 @@ def add_parsers(subparsers):
                         help='file to parse tablature from')
     parser.add_argument('-i', '--instrument', action='store', default=None,
                         help='Instrument to fetch chords for')
-    parser.add_argument('-t', '--transpose', action='store', type=int, default=0,
-                        help='Number of steps to transpose the tab. Defaults to 0')
+    parser.add_argument('-t', '--transpose', action='store', type=int,
+                        default=0, help=('Number of steps to transpose the tab.'
+                                         ' Defaults to 0'))
     parser.add_argument('-c', '--capo', action='store', type=int, default=0,
                         help='Capo position for the instrument. Defaults to 0')
     parser.add_argument("--curses",
@@ -35,17 +36,20 @@ def add_parsers(subparsers):
 
 
 def _parse_tablature(filename, instrument, use_curses, transpose, capo):
-    if not os.path.isfile(filename):
-        raise ValueError("'{}' is not a valid file".format(filename))
+    with open(filename) as fin:
+        lines = fin.readlines()
+    tablature = parse_tablature(lines)
+    if transpose:
+        tablature = transpose_tablature(tablature, transpose)
     instrument = Instrument.from_name(instrument, UKELELE)
     if capo:
         instrument = instrument.capo(capo)
-    tab = Tablature.parse(open(filename).readlines(), transpose=transpose)
     if use_curses:
-        render = lambda s: _render_tablature_with_curses(s, tab, instrument)
+        render = lambda s: _render_tablature_with_curses(s, tablature,
+                                                         instrument)
         curses.wrapper(render)
     else:
-        TerminalRenderer().render(tab, instrument)
+        terminal.render_tablature(tablature, instrument)
 
 
 def _render_tablature_with_curses(stdscr, tab, instrument):

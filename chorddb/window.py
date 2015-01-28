@@ -152,14 +152,15 @@ class CursesRenderer(object):
         try:
             nline, nchord = self._all_chords[self._selected_chord_index]
             line = self._tab.lines[nline]
-            self._selected_chord = line.contents().chords[nchord][0]
+            self._selected_chord = line.data.chords[nchord].chord
         except IndexError:
             self._selected_chord = None
 
     def _all_chord_coords(self):
         for nline, line in enumerate(self._tab.lines):
-            for nchord in xrange(len(line.contents().chords)):
-                yield nline, nchord
+            if line.type == 'chord':
+                for nchord in xrange(len(line.data.chords)):
+                    yield nline, nchord
 
     def _refresh(self):
         self._window.refresh()
@@ -170,18 +171,17 @@ class CursesRenderer(object):
             self._render_line(line, ypos)
 
     def _render_line(self, line, ypos):
-        contents = line.contents()
-        if contents.chords:
-            self._render_tab_chords(contents, ypos)
-        else:
-            self._render_tab_text(contents, ypos)
+        if line.type == 'chord':
+            self._render_tab_chords(line.data, ypos)
+        elif line.type == 'lyric':
+            self._render_tab_text(line.data.lyrics, ypos)
 
-    def _render_tab_text(self, contents, ypos):
-        self._write(self._window.lyrics_pad, 0, ypos, contents.line)
+    def _render_tab_text(self, text, ypos):
+        self._write(self._window.lyrics_pad, 0, ypos, text)
 
     def _render_tab_chords(self, contents, ypos):
         cursor = 0
-        for nchord, (chord, pos) in enumerate(contents.chords):
+        for nchord, (pos, chord) in enumerate(contents.chords):
             cursor = max(cursor, pos)
             text = chord.text()
             attr = colors.curse.BOLD
