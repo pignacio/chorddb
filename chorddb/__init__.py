@@ -1,11 +1,10 @@
 from __future__ import absolute_import
 
 from argparse import ArgumentParser
-import curses
 import logging
 import os
 
-from . import colors, terminal
+from . import colors, terminal, curses
 from .tab import parse_tablature, transpose_tablature
 from .window import CursesRenderer
 from .instrument import UKELELE, Instrument
@@ -45,9 +44,7 @@ def _parse_tablature(filename, instrument, use_curses, transpose, capo):
     if capo:
         instrument = instrument.capo(capo)
     if use_curses:
-        render = lambda s: _render_tablature_with_curses(s, tablature,
-                                                         instrument)
-        curses.wrapper(render)
+        curses.render_tablature(tablature, instrument)
     else:
         terminal.render_tablature(tablature, instrument)
 
