@@ -31,6 +31,9 @@ def add_parsers(subparsers):
     parser.add_argument("--curses",
                         action='store_true', dest='use_curses', default=False,
                         help="Use curses to show tablature")
+    parser.add_argument("--debug",
+                        action="store_true", dest="debug", default=False,
+                        help="Sets logging level to DEBUG")
     parser.set_defaults(func=_parse_tablature)
 
 
@@ -61,11 +64,13 @@ def _extract_from_options(key, options):
 
 
 def main():
-    import sys
-    logging.basicConfig(stream=sys.stdout, level=logging.INFO)
     parser = _get_arg_parser()
     options = parser.parse_args()
 
+    logging.basicConfig(filename='chorddb.log', filemode="w",
+                        level=(logging.DEBUG
+                               if _extract_from_options("debug", options)
+                               else logging.INFO))
     subparser = _extract_from_options("subparser", options)
 
     try:
