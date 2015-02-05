@@ -28,6 +28,23 @@ class CursesScreen(object):
         return self.get_dimensions()[1]
 
     def write(self, xpos, ypos, text, color, attr=0):
+        if not 0 <= ypos < self.height:
+            logger.warning("Writing outside screen: ypos=%s not in [0,%s)]",
+                           ypos, self.height)
+            return
+        if xpos >= self.width:
+            logger.warning("Writing outside screen: xpos=%s > width=%s",
+                           xpos, self.width)
+            return
+        if xpos < 0:
+            logger.warning("Writing outside screen: xpos=%s < 0", xpos)
+            text = text[abs(xpos):]
+            xpos = 0
+        if xpos + len(text) > self.width:
+            logger.warning("Writing outside screen: text '%s' is too large "
+                           "(len=%s + xpos=%s > width=%s)", text, len(text),
+                           xpos, self.width)
+            text = text[:self.width - xpos]
         self._screen.addstr(ypos, xpos, text, curses.color_pair(color) | attr)
 
     def write_all(self, blits):

@@ -40,12 +40,14 @@ _RenderState = collections.namedtuple('RenderState', [
     'tablature',
     'instrument',
     'running',
+    'screen_width',
     'screen_height',
     'lyrics_position',
     'indexed_chords',
     'current_chord_index',
     'chord_versions',
     'current_chord_version_index',
+    'chord_drawing_is_reversed',
 ])
 
 
@@ -74,6 +76,10 @@ class RenderState(_RenderState):
             lyrics_position = 0
         return lyrics_position
 
+    def reverse_chord_drawing(self):
+        return self._replace(
+            chord_drawing_is_reversed=not self.chord_drawing_is_reversed)
+
     def current_indexed_chord(self):
         return _wrap_get(self.indexed_chords, self.current_chord_index)
 
@@ -94,7 +100,9 @@ class RenderState(_RenderState):
             tablature=tablature,
             instrument=instrument,
             indexed_chords=indexed_chords,
+            screen_width=screen.width,
             screen_height=screen.height,
             chord_versions=chord_versions,
-            current_chord_version_index=collections.defaultdict(int)
+            current_chord_version_index=collections.defaultdict(int),
+            chord_drawing_is_reversed=False,
         )
