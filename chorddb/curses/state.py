@@ -80,6 +80,11 @@ class RenderState(_RenderState):
         return self._replace(
             chord_drawing_is_reversed=not self.chord_drawing_is_reversed)
 
+    def center_lyrics_line(self, line_index):
+        new_position = self._to_lyrics_position_range(
+            line_index - self.screen_height / 2)
+        return self._replace(lyrics_position=new_position)
+
     def current_indexed_chord(self):
         return _wrap_get(self.indexed_chords, self.current_chord_index)
 

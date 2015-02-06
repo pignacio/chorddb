@@ -117,6 +117,11 @@ def _update_lyrics_pad(lyrics_pad, state):
     lyrics_pad.write_all(blits)
 
 
+def _center_at_current_chord(state):
+    chord = state.current_indexed_chord()
+    return state.center_lyrics_line(chord.line)
+
+
 def _process_input_key(key, state):
     if key == ord('q'):
         state = state._replace(running=False)
@@ -124,13 +129,15 @@ def _process_input_key(key, state):
         state = state.move_lyrics(1)
     elif key == curses.KEY_UP:
         state = state.move_lyrics(-1)
-    elif key == ord('h'):
-        state = state.move_current_chord(-1)
-    elif key == ord('l'):
-        state = state.move_current_chord(1)
     elif key == ord('j'):
-        state = state.move_current_chord_version(-1)
+        state = state.move_current_chord(-1)
+        state = _center_at_current_chord(state)
     elif key == ord('k'):
+        state = state.move_current_chord(1)
+        state = _center_at_current_chord(state)
+    elif key == ord('h'):
+        state = state.move_current_chord_version(-1)
+    elif key == ord('l'):
         state = state.move_current_chord_version(1)
     elif key == ord('r'):
         state = state.reverse_chord_drawing()
@@ -181,11 +188,11 @@ INSTRUCTIONS = """
  INSTRUCTIONS/KEYBINDINGS
 
 
- l - move to next chord in song
- h - move to previous chord in song
- k - move to next current chord
+ k - move to next chord in song
+ j - move to previous chord in song
+ l - move to next current chord
      version
- j - move to previous current chord
+ h - move to previous current chord
      version
  up/down - navigate
  q - quit
