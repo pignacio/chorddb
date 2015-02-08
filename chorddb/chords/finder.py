@@ -6,7 +6,6 @@ Created on May 17, 2014
 
 
 class ChordFinder(object):
-
     def __init__(self, instrument, chord):
         self._instrument = instrument
         self._chord = chord if instrument.has_bass else chord.bassless()
@@ -72,7 +71,7 @@ def get_fingerings(chord, instrument):
                 continue
             if chord.bass not in chord.variation_keys():
                 bass_count = len([ko for ko in fingering.keyoctaves()
-                                 if ko.key == chord.bass])
+                                  if ko.key == chord.bass])
                 if bass_count > 1:
                     continue
         yield fingering
@@ -125,7 +124,7 @@ class Fingering(object):
         return res[:len(self._instrument)]
 
     def __str__(self):
-        return "".join(list(map(str, self.full_positions())))
+        return "".join(str(x) for x in self.full_positions())
 
 
 def get_fingering_penalty(fingering):

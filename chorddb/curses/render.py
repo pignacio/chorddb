@@ -144,7 +144,8 @@ def _process_input_key(key, state):
     return state
 
 
-def _get_line_blits(line, ypos, state, selected_chord_indexes={}):
+def _get_line_blits(line, ypos, state, selected_chord_indexes=None):
+    selected_chord_indexes = selected_chord_indexes or {}
     res = []
     if line.type == 'lyric':
         res.append(CursesBlit(

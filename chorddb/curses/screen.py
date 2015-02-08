@@ -16,8 +16,8 @@ class CursesScreen(object):
         self._screen = screen
 
     def get_dimensions(self):
-        y, x = self._screen.getmaxyx()
-        return x, y
+        size_y, size_x = self._screen.getmaxyx()
+        return size_x, size_y
 
     @property
     def width(self):
