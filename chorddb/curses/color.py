@@ -1,4 +1,12 @@
+#! /usr/bin/env python
+# -*- coding: utf-8 -*-
+from __future__ import absolute_import, unicode_literals
+
 import curses
+import logging
+
+
+logger = logging.getLogger(__name__)  # pylint: disable=invalid-name
 
 
 BOLD = curses.A_BOLD
@@ -14,6 +22,6 @@ _COLORS_DEFINITIONS = {
 }
 
 
-def init():
+def init_colors():
     for color_id, color_pair in _COLORS_DEFINITIONS.items():
         curses.init_pair(color_id, color_pair[0], color_pair[1])
