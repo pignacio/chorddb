@@ -2,9 +2,9 @@ chorddb
 =======
 
 [![Build
-Status](https://travis-ci.org/pignacio/chorddb.svg?branch=bug-4-fix-readme-md)](https://travis-ci.org/pignacio/chorddb)
+Status](https://travis-ci.org/pignacio/chorddb.svg?branch=master)](https://travis-ci.org/pignacio/chorddb)
 [![Coverage
-Status](https://coveralls.io/repos/pignacio/chorddb/badge.svg?branch=enhancement-25-integrate-travis-and-coverall)](https://coveralls.io/r/pignacio/chorddb?branch=enhancement-25-integrate-travis-and-coverall)
+Status](https://coveralls.io/repos/pignacio/chorddb/badge.svg?branch=master)](https://coveralls.io/r/pignacio/chorddb?branch=master)
 
 A guitar tablature parser
 
