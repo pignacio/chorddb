@@ -4,9 +4,8 @@ from argparse import ArgumentParser
 import logging
 import os
 
-from . import colors, terminal, curses
+from . import terminal, curses
 from .tab import parse_tablature, transpose_tablature
-from .window import CursesRenderer
 from .instrument import UKELELE, Instrument
 
 
@@ -50,11 +49,6 @@ def _parse_tablature(filename, instrument, use_curses, transpose, capo):
         curses.render_tablature(tablature, instrument)
     else:
         terminal.render_tablature(tablature, instrument)
-
-
-def _render_tablature_with_curses(stdscr, tab, instrument):
-    colors.curse.init()
-    CursesRenderer(stdscr, tab, instrument).run()
 
 
 def _extract_from_options(key, options):
