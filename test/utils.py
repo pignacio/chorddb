@@ -69,3 +69,7 @@ class Sentinels(object):
             sentinel = _Sentinel(self, key)
             self._sentinels[key] = sentinel
             return sentinel
+
+
+def make_namedtuple(**values):
+    return collections.namedtuple('MockNT', list(values))(**values)

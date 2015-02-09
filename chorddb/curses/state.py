@@ -11,14 +11,15 @@ from ..chords.library import ChordLibrary
 logger = logging.getLogger(__name__)  # pylint: disable=invalid-name
 
 
-def _get_chord_versions(chords, instrument):
+def _get_indexed_chords_versions(indexed_chords, instrument):
+    chords = set(c.chord for c in indexed_chords)
     library = ChordLibrary(instrument)
     return {
         c: library.get_all(c) for c in chords
     }
 
 
-def _wrap_get(array, index):
+def wrap_get(array, index):
     return array[index % len(array)]
 
 
@@ -86,18 +87,19 @@ class RenderState(_RenderState):
         return self._replace(lyrics_position=new_position)
 
     def current_indexed_chord(self):
-        return _wrap_get(self.indexed_chords, self.current_chord_index)
+        return wrap_get(self.indexed_chords, self.current_chord_index)
 
     def get_chord_version(self, chord):
         versions = self.chord_versions.get(chord, [])
-        return (_wrap_get(versions, self.current_chord_version_index[chord])
+        return (wrap_get(versions, self.current_chord_version_index[chord])
                 if versions else None)
 
     @classmethod
     def initial_state(cls, tablature, instrument, screen):
+        print _get_indexed_chords
         indexed_chords = _get_indexed_chords(tablature)
-        chord_versions = _get_chord_versions(
-            set(c.chord for c in indexed_chords), instrument)
+        chord_versions = _get_indexed_chords_versions(
+            indexed_chords, instrument)
         return cls(
             lyrics_position=0,
             current_chord_index=0,
