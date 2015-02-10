@@ -10,9 +10,14 @@ from unittest import TestCase
 from chorddb.curses.state import RenderState, IndexedChord, _get_indexed_chords_versions, ChordLibrary, _get_indexed_chords, wrap_get
 from ..test_tab.mock_objects import MockTablature, MockTabLine, MockChordLineData, MockTabChord
 from ..utils import (
-    Sentinels, make_namedtuple as make_nt, mock_namedtuple as mock_nt)
+    Sentinels, make_namedtuple as make_nt,
+    mock_namedtuple_class)
 
 logger = logging.getLogger(__name__)  # pylint: disable=invalid-name
+
+
+MockRenderState = mock_namedtuple_class(RenderState)
+MockIndexedChord = mock_namedtuple_class(IndexedChord)
 
 
 class RenderStateInitialTests(TestCase):
@@ -85,9 +90,9 @@ class RenderStateInitialTests(TestCase):
 def test_get_indexed_chords_versions(mock_chord_library):
     sentinels = Sentinels()
     indexed_chords = [
-        mock_nt(IndexedChord, chord=sentinels.first_chord),
-        mock_nt(IndexedChord, chord=sentinels.second_chord),
-        mock_nt(IndexedChord, chord=sentinels.first_chord),
+        MockIndexedChord(chord=sentinels.first_chord),
+        MockIndexedChord(chord=sentinels.second_chord),
+        MockIndexedChord(chord=sentinels.first_chord),
     ]
     chord_versions = {
         sentinels.first_chord: sentinels.first_versions,
@@ -149,8 +154,7 @@ class RenderStateMoveLyricsTests(TestCase):
     def setUp(self):
         lines = Mock()
         lines.__len__ = Mock(return_value=100)
-        self.state = mock_nt(
-            RenderState,
+        self.state = MockRenderState(
             tablature=MockTablature(
                 lines=lines
             ),
@@ -205,13 +209,42 @@ class WrapGetTests(TestCase):
         eq_(wrap_get(self.array, 5), self.sentinels.third)
 
 
+def test_move_current_chord():
+    state = MockRenderState(
+        current_chord_index=0,
+    )
+    state = state.move_current_chord(10)
+    eq_(state.current_chord_index, 10)
+    state = state.move_current_chord(-15)
+    eq_(state.current_chord_index, -5)
+
+
+def test_move_current_chord_version():
+    sentinels = Sentinels()
+    mock_current_chord = Mock(return_value=MockIndexedChord(
+        chord=sentinels.chord))
+    state = MockRenderState(
+        current_chord_version_index={
+            sentinels.chord: 5,
+            sentinels.other_chord: sentinels.value,
+        },
+    )
+    state.current_indexed_chord = mock_current_chord
+
+    state = state.move_current_chord_version(10)
+
+    eq_(state.current_chord_version_index[sentinels.chord], 15)
+    eq_(state.current_chord_version_index[sentinels.other_chord],
+        sentinels.value)
+    mock_current_chord.assert_called_once_with()
+
+
 @patch('chorddb.curses.state.wrap_get')
 def test_renderstate_current_chord(mock_wrap_get):
     sentinels = Sentinels()
     mock_wrap_get.return_value = sentinels.current_chord
 
-    current_chord = mock_nt(
-        RenderState,
+    current_chord = MockRenderState(
         indexed_chords=sentinels.indexed_chords,
         current_chord_index=sentinels.current_chord_index
     ).current_indexed_chord()
@@ -219,4 +252,25 @@ def test_renderstate_current_chord(mock_wrap_get):
     eq_(current_chord, sentinels.current_chord)
     mock_wrap_get.assert_called_once_with(sentinels.indexed_chords,
                                           sentinels.current_chord_index)
+
+
+@patch('chorddb.curses.state.wrap_get')
+def test_renderstate_get_chord_version(mock_wrap_get):
+    sentinels = Sentinels()
+    mock_wrap_get.return_value = sentinels.current_version
+    mock_chords_version = Mock()
+    mock_chords_version.get.return_value = sentinels.version_list
+    current_version_index = {
+        sentinels.chord: sentinels.chord_index,
+    }
+
+    current_version = MockRenderState(
+        chord_versions=mock_chords_version,
+        current_chord_version_index=current_version_index,
+    ).get_chord_version(sentinels.chord)
+
+    eq_(current_version, sentinels.current_version)
+    mock_chords_version.get.assert_called_once_with(sentinels.chord, [])
+    mock_wrap_get.assert_called_once_with(sentinels.version_list,
+                                          sentinels.chord_index)
 
