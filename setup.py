@@ -43,7 +43,7 @@ setup(
         'License :: OSI Approved :: GNU General Public License v3 (GPLv3)',
 
         # Indicate who your project is intended for
-        'Intended Audience :: Julia y mimí',
+        # 'Intended Audience :: Julia y mimí',
 
         # Specify the Python versions you support here. In particular, ensure
         # that you indicate whether you support Python 2, Python 3 or both.
