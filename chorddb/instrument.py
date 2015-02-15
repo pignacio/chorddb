@@ -1,35 +1,26 @@
+#!/usr/bin/env python
+# encoding: utf-8
+
+import collections
+
 from .notes import KeyOctave, Key
 from .chords.variations import map_variations_to_intervals, VARIATIONS_NOTES
 
 
-class Instrument(object):
-    def __init__(self, name, keyoctaves, frets, has_bass=True,
-                 variation_overrides=None):
-        self._name = name
-        self._keyoctaves = keyoctaves
-        self._frets = frets
-        self._has_bass = has_bass
-        self._variation_overrides = variation_overrides or {}
+_Instrument = collections.namedtuple('Instrument', [
+    'name', 'keyoctaves', 'frets', 'has_bass', 'variation_overrides'], verbose=True)
 
-    @property
-    def name(self):
-        return self._name
 
-    @property
-    def keyoctaves(self):
-        return self._keyoctaves
-
-    @property
-    def frets(self):
-        return self._frets
-
-    @property
-    def has_bass(self):
-        return self._has_bass
-
-    @property
-    def variation_overrides(self):
-        return self._variation_overrides
+class Instrument(_Instrument):
+    def __new__(cls, *args, **kwargs):
+        defaults = {
+            'has_bass': False,
+            'variation_overrides': {},
+        }
+        fields_in_args = set(_Instrument._fields[:len(args)])
+        kwvalues = {f: kwargs.get(f, defaults[f]) for f in _Instrument._fields
+                    if f not in fields_in_args}
+        return _Instrument.__new__(cls, *args, **kwvalues)  # pylint: disable=star-args
 
     @classmethod
     def parse(cls, name, keys, frets, **kwargs):
@@ -55,18 +46,22 @@ class Instrument(object):
             raise
 
     def capo(self, capo_position):
-        return Instrument(
-            "{}(Capo: {})".format(self.name, capo_position),
-            [ko.transpose(capo_position) for ko in self.keyoctaves],
-            self.frets - capo_position,
-            self.has_bass
+        kwds = {
+            'name':"{}(Capo: {})".format(self.name, capo_position),
+            'keyoctaves':[ko.transpose(capo_position) for ko in self.keyoctaves],
+            'frets':self.frets - capo_position,
+        }
+        return self._replace(
+            name="{}(Capo: {})".format(self.name, capo_position),
+            keyoctaves=[ko.transpose(capo_position) for ko in self.keyoctaves],
+            frets=self.frets - capo_position,
         )
 
     def __str__(self):
         return "Instrument: {s.name}".format(s=self)
 
-    def __len__(self):
-        return len(self._keyoctaves)
+    def size(self):
+        return len(self.keyoctaves)
 
 
 LOOG_VARIATION_OVERRIDES = {
