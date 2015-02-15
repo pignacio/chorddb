@@ -34,11 +34,6 @@ class Chord(object):
     def bass(self):
         return self._bass
 
-    @memoize
-    def variation_keys(self):
-        return set([self.key.transpose(interval)
-                    for interval in VARIATIONS_NOTES[self.variation]])
-
     def text(self):
         bass = ('' if self._key == self._bass
                 else "/{}".format(self._bass.text()))
