@@ -18,8 +18,8 @@ def basic_capo_test():
     capo_position = 2
     keyoctaves = [KeyOctave.parse(x + "0") for x in "ABCDEFG"]
     transposed = [ko.transpose(capo_position) for ko in keyoctaves]
-    with_bass = Instrument(keyoctaves, 30, True)
-    without_bass = Instrument(keyoctaves, 30, False)
+    with_bass = Instrument("test", keyoctaves, 30, True)
+    without_bass = Instrument("test", keyoctaves, 30, False)
     for original in [with_bass, without_bass]:
         capoed = original.capo(capo_position)
         eq_(capoed.has_bass, original.has_bass)
