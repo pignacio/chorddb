@@ -80,6 +80,7 @@ def _get_division_blits(vertical_division, chordpad_width, chordpad_height,
 
 
 def _update_chord_pad(chord_pad, state):
+    chord_pad.clear()
     chord = state.current_indexed_chord().chord
     version = state.get_chord_version(chord)
     version_count = len(state.chord_versions.get(chord, []))
