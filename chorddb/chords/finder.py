@@ -112,9 +112,9 @@ class Fingering(object):
         self._instrument = instrument
         self._positions = positions
         self._start = start or 0
-        if not 0 <= self._start < len(instrument):
+        if not 0 <= self._start < instrument.size():
             raise ValueError("Invalid start")
-        if len(instrument) < self._start + len(positions):
+        if instrument.size() < self._start + len(positions):
             raise ValueError("Invalid positions for instrument")
         if not all(0 <= p < instrument.frets for p in positions):
             raise ValueError("Invalid positions for instrument")
@@ -140,9 +140,9 @@ class Fingering(object):
         return min(self.keyoctaves())
 
     def full_positions(self):
-        res = ["x"] * len(self._instrument)
+        res = ["x"] * self._instrument.size()
         res[self._start:self._start] = self._positions
-        return res[:len(self._instrument)]
+        return res[:self._instrument.size()]
 
     def __str__(self):
         return "".join(str(x) for x in self.full_positions())
@@ -163,10 +163,10 @@ def get_fingering_penalty(fingering):
         return {'too many fingers': 10000}
     penalty = {
         'start': fingering.start * 5 ** 2,
-        'end': (len(fingering.instrument) - fingering.start -
+        'end': (fingering.instrument.size() - fingering.start -
                 len(fingering.positions)) * 8 ** 2,
         'positions': sum((p - bar + 2) ** 2 for p in fingering.positions),
-        'bar': bar * len(fingering.instrument) * 3 if bar else 0,
+        'bar': bar * fingering.instrument.size() * 3 if bar else 0,
         'consecutive_diffs': sum((a - b) ** 2 for a, b in
                                  zip(fingering.positions,
                                      fingering.positions[1:])
