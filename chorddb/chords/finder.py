@@ -4,89 +4,110 @@ Created on May 17, 2014
 @author: ignacio
 '''
 
+import collections
 
-class ChordFinder(object):
-    def __init__(self, instrument, chord):
-        self._instrument = instrument
-        self._chord = chord if instrument.has_bass else chord.bassless()
-        self._keys = chord.variation_keys()
-        self._keys.add(chord.bass)
-        self._res = []
-        self._string_notes = self._get_string_notes()
-        self._search()
+from .variations import VARIATIONS_NOTES
 
-    def _search(self):
-        self._backtrack([])
 
-    def _backtrack(self, current):
-        if set(c[1].key for c in current if c) == self._keys:  # is valid
-            self._res.append(list(current))
-        if len(current) == len(self._string_notes):  # no childs
-            return
+PositionedNote = collections.namedtuple('PositionedNote', ['position', 'note'])
 
-        used = sorted([c[0] for c in current if c and c[0]])
-        maxi = used[-1] if used else 0
-        mini = used[0] if used else 10000
 
-        for pos, note in self._string_notes[len(current)]:
-            if maxi - pos > 4 or pos - mini > 4:  # Stretch basic test
-                continue
-            current.append((pos, note))
-            self._backtrack(current)
-            current.pop()
+def find_fingerings(instrument, keys):
+    for positions in search(instrument, keys):
+        start = positions.count(None)
+        fingering = [x.position for x in positions[start:]]
+        yield Fingering(fingering, instrument, start)
 
-        # Consider empty:
-        if all(c is None for c in current):
-            current.append(None)
-            self._backtrack(current)
-            current.pop()
 
-    def fingerings(self):
-        for positions in self._res:
-            start = positions.count(None)
-            fingering = [x[0] for x in positions[start:]]
-            yield Fingering(fingering, self._instrument, start)
+BactrackState = collections.namedtuple('BactrackState', ['keys', 'valid_notes',
+                                                         'current', 'res'])
 
-    def _get_string_notes(self):
-        string_notes = []
-        for keyoctave in self._instrument.keyoctaves:
-            string_notes.append([])
-            for index in xrange(self._instrument.frets):
-                key = keyoctave.transpose(index)
-                if key.key in self._keys:
-                    string_notes[-1].append((index, key))
-        return string_notes
 
-    @classmethod
-    def find(cls, instrument, chord):
-        return cls(instrument, chord).fingerings()
+def search(instrument, keys):
+    return _backtrack(BactrackState(
+        keys=set(keys),
+        valid_notes=_get_valid_notes(instrument, keys),
+        current=[],
+        res=[]
+    ))
+
+
+def _backtrack(state):
+    if set(c.note.key for c in state.current if c) == state.keys:  # is valid
+        state.res.append(list(state.current))  # make a copy
+    if len(state.current) == len(state.valid_notes):  # no childs
+        return
+
+    used = sorted([c.position for c in state.current if c and c.position])
+    maxi = used[-1] if used else 0
+    mini = used[0] if used else 10000
+
+    for posnote in state.valid_notes[len(state.current)]:
+        if maxi - posnote.position > 4 or posnote.position - mini > 4:
+            # Stretch basic test
+            continue
+        state.current.append(posnote)
+        _backtrack(state)
+        state.current.pop()
+
+    # Consider empty start:
+    if all(c is None for c in state.current):
+        state.current.append(None)
+        _backtrack(state)
+        state.current.pop()
+
+    return state.res
+
+def _get_valid_notes(instrument, keys):
+    keys = set(keys)
+    valid_notes = []
+    for keyoctave in instrument.keyoctaves:
+        keyoctaves = (keyoctave.transpose(t) for t in xrange(instrument.frets))
+        valid_keyoctaves = (PositionedNote(position=i, note=ko)
+                            for i, ko in enumerate(keyoctaves)
+                            if ko.key in keys)
+        valid_notes.append(list(valid_keyoctaves))
+    return valid_notes
 
 
 def get_fingerings(chord, instrument):
+    return list(_get_fingerings(chord, instrument))
+
+
+def _get_fingerings(chord, instrument):
     if not instrument.has_bass:
         chord = chord.bassless()  # Remove bass if present
-    for fingering in ChordFinder.find(instrument, chord):
-        if instrument.has_bass:
-            if fingering.bass().key != chord.bass:
-                continue
-            if chord.bass not in chord.variation_keys():
-                bass_count = len([ko for ko in fingering.keyoctaves()
-                                  if ko.key == chord.bass])
-                if bass_count > 1:
+
+    variations = instrument.variation_overrides.get(
+        chord.variation, VARIATIONS_NOTES[chord.variation])
+    for variation in variations:
+        keys = set(chord.key.transpose(v) for v in variation)
+        bass_not_in_variation = False
+        if instrument.has_bass and not chord.bass in keys:
+            keys.add(chord.bass)
+            bass_not_in_variation = True
+
+        for fingering in find_fingerings(instrument, keys):
+            if instrument.has_bass:
+                if fingering.bass().key != chord.bass:
                     continue
-        yield fingering
+                if bass_not_in_variation:
+                    bass_count = len([ko for ko in fingering.keyoctaves()
+                                      if ko.key == chord.bass])
+                    if bass_count > 1:
+                        continue
+            yield fingering
 
 
 def _max(fingering):
-    return max(x[0] for x in fingering if x[0] > 0)
+    return max(x.position for x in fingering if x.position > 0)
 
 
 def _min(fingering):
-    return min(x[0] for x in fingering if x[0] > 0)
+    return min(x.position for x in fingering if x.position > 0)
 
 
 class Fingering(object):
-
     def __init__(self, positions, instrument, start=None):
         self._instrument = instrument
         self._positions = positions
