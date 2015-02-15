@@ -38,7 +38,7 @@ def _render_chord_line(line, instrument):
         _write_to_buff(buff, chord.chord.text(), color.CYAN,
                        style=color.STYLE_BRIGHT)
         if chord.fingering:
-            size += _write_to_buff(buff, "({})".format(chord.fingering),
+            size += _write_to_buff(buff, "({}) ".format(chord.fingering),
                                    color.RED)
     return buff.getvalue()
 
