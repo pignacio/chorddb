@@ -8,7 +8,7 @@
  ||-o-|---|---|---|
 
 """
-import StringIO
+import io
 
 
 def draw_chord(fingering, reverse=True):
@@ -31,15 +31,15 @@ def draw_chord(fingering, reverse=True):
 
     keyoctaves = [ko.key for ko in fingering.instrument.keyoctaves]
 
-    values = zip(fingering.full_positions(), keyoctaves)
+    values = list(zip(fingering.full_positions(), keyoctaves))
     if reverse:
         values.reverse()
 
     for position, keyoctave in values:
-        line = StringIO.StringIO()
+        line = io.StringIO()
         char = 'o' if position == 0 else 'x' if position == 'x' else ' '
         line.write(_line_start(char, keyoctave))
-        for fret in xrange(0, end + 1):
+        for fret in range(0, end + 1):
             line.write(_fret(position == fret + start))
         lines.append(line.getvalue())
 

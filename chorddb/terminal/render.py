@@ -1,8 +1,8 @@
 #! /usr/bin/env python
 # -*- coding: utf-8 -*-
-from __future__ import absolute_import, unicode_literals
 
-from StringIO import StringIO
+
+from io import StringIO
 import collections
 import logging
 
@@ -45,18 +45,18 @@ def _render_chord_line(line, instrument):
 
 def _render_line(line, instrument, debug=False):
     if debug:
-        print colorize("{:8s}:".format(line.type), color.GREEN,
-                       style=color.STYLE_BRIGHT),
+        print(colorize("{:8s}:".format(line.type), color.GREEN,
+                       style=color.STYLE_BRIGHT), end=' ')
     if line.type == 'empty':
-        print
+        print()
     elif line.type == 'lyric':
-        print line.data.lyrics
+        print(line.data.lyrics)
     elif line.type == 'chord':
-        print _render_chord_line(line, instrument)
+        print(_render_chord_line(line, instrument))
     else:
-        print colorize("Unknown line type: '{}'".format(line.type), fore=RED,
-                       style=STYLE_BRIGHT)
-        print line.original
+        print(colorize("Unknown line type: '{}'".format(line.type), fore=RED,
+                       style=STYLE_BRIGHT))
+        print(line.original)
 
 
 def render_tablature(tablature, instrument, debug=False):
