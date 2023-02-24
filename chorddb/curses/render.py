@@ -159,7 +159,7 @@ def _get_line_blits(line, ypos, state, selected_chord_indexes=None):
     elif line.type == 'chord':
         position = 0
         for index, (chord_position, chord) in enumerate(line.data.chords):
-            attr = (curses.A_STANDOUT | curses.A_BOLD
+            attr = (curses.A_STANDOUT
                     if index in selected_chord_indexes
                     else 0)
             this_pos = max(position, chord_position)
