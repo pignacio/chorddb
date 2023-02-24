@@ -1,6 +1,6 @@
 #! /usr/bin/env python
 # -*- coding: utf-8 -*-
-from __future__ import absolute_import, unicode_literals
+
 
 import collections
 import curses
@@ -68,7 +68,7 @@ def _get_chordpad_dimensions(screen):
 
 def _get_division_blits(vertical_division, chordpad_width, chordpad_height,
                         state):
-    for ypos in xrange(0, state.screen_height):
+    for ypos in range(0, state.screen_height):
         size = chordpad_width + 1 if ypos == chordpad_height else 1
         yield CursesBlit(
             xpos=vertical_division - 1,
@@ -159,7 +159,7 @@ def _get_line_blits(line, ypos, state, selected_chord_indexes=None):
     elif line.type == 'chord':
         position = 0
         for index, (chord_position, chord) in enumerate(line.data.chords):
-            attr = (curses.A_STANDOUT | curses.A_BOLD
+            attr = (curses.A_STANDOUT
                     if index in selected_chord_indexes
                     else 0)
             this_pos = max(position, chord_position)

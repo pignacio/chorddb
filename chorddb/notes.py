@@ -36,7 +36,7 @@ _NOTE_ACCIDENTALS = {
     "G": "b#",
 }
 
-NOTE_ACCIDENTALS = dict((k, list(v)) for (k, v) in _NOTE_ACCIDENTALS.items())
+NOTE_ACCIDENTALS = dict((k, list(v)) for (k, v) in list(_NOTE_ACCIDENTALS.items()))
 KEY_NORMALIZATIONS = {
     "Ab": "G#",
     "Bb": "A#",
@@ -110,7 +110,7 @@ class Key(object):
     @memoize
     def all(cls):
         res = set()
-        for note, accidentals in NOTE_ACCIDENTALS.items():
+        for note, accidentals in list(NOTE_ACCIDENTALS.items()):
             for accidental in accidentals:
                 res.add(cls(note, accidental))
             res.add(cls(note))

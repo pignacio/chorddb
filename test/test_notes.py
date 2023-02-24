@@ -13,7 +13,7 @@ from chorddb.notes import Key, KeyOctave
 _NOTES = "ABCDEFG"
 _KEYS = ["A", "A#", "B", "C", "C#", "D", "D#", "E", "F", "F#", "G", "G#"]
 _KEYOCTAVES = ["{}{}".format(__key, __octave)
-               for __octave in xrange(6) for __key in _KEYS]
+               for __octave in range(6) for __key in _KEYS]
 
 _INVALID_NOTES = ["H", "a", "b", 1, [], {}, None]
 _INVALID_ACCIDENTALS = ['.', '!', 'B', '*', '%']
@@ -119,7 +119,7 @@ def key_transpose_test():
     ''' Check Key transpositions work '''
     keys = _keys()
     for index, key in enumerate(keys):
-        for interval in xrange(25):
+        for interval in range(25):
             nindex = (interval + index) % len(keys)
             eq_(key.transpose(interval), keys[nindex])
 
@@ -131,7 +131,7 @@ def key_transpose_test():
 def keyoctave_parse_test():
     ''' Check valid KeyOctave parses '''
     for key in _KEYS:
-        for octave in xrange(10):
+        for octave in range(10):
             keyoctave = KeyOctave.parse("{}{}".format(key, octave))
             eq_(keyoctave.key, Key.parse(key))
             eq_(keyoctave.octave, octave)

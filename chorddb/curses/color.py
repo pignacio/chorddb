@@ -1,6 +1,6 @@
 #! /usr/bin/env python
 # -*- coding: utf-8 -*-
-from __future__ import absolute_import, unicode_literals
+
 
 import curses
 import logging
@@ -23,5 +23,5 @@ _COLORS_DEFINITIONS = {
 
 
 def init_colors():
-    for color_id, color_pair in _COLORS_DEFINITIONS.items():
+    for color_id, color_pair in list(_COLORS_DEFINITIONS.items()):
         curses.init_pair(color_id, color_pair[0], color_pair[1])

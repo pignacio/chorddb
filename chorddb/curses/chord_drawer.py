@@ -1,9 +1,9 @@
 #! /usr/bin/env python
 # -*- coding: utf-8 -*-
-from __future__ import absolute_import, unicode_literals
+
 
 import logging
-from StringIO import StringIO
+from io import StringIO
 
 
 logger = logging.getLogger(__name__)  # pylint: disable=invalid-name
@@ -42,7 +42,7 @@ def draw_chord(fingering, reverse=True):
 
     keyoctaves = [ko.key for ko in fingering.instrument.keyoctaves]
 
-    values = zip(fingering.full_positions(), keyoctaves)
+    values = list(zip(fingering.full_positions(), keyoctaves))
     if reverse:
         values.reverse()
 
@@ -50,7 +50,7 @@ def draw_chord(fingering, reverse=True):
         line = StringIO()
         char = 'o' if position == 0 else 'x' if position == 'x' else ' '
         line.write(_line_start(char, keyoctave))
-        for fret in xrange(0, end + 1):
+        for fret in range(0, end + 1):
             line.write(_fret(position == fret + start))
         lines.append(line.getvalue())
 

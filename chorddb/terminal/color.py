@@ -1,6 +1,6 @@
 import colorama
 import collections
-import StringIO
+import io
 
 # colorama.init()
 
@@ -36,7 +36,7 @@ RESET_ALL = colorama.Style.RESET_ALL  # pylint: disable=no-member
 
 
 def colorize(text, fore=NULL, back=NULL, style=STYLE_NORMAL):
-    res = StringIO.StringIO()
+    res = io.StringIO()
     # Apply style
     res.write("".join([x or '' for x in [fore.fore, back.back,
                                          style]]))

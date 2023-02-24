@@ -62,7 +62,7 @@ def _get_valid_notes(instrument, keys):
     keys = set(keys)
     valid_notes = []
     for keyoctave in instrument.keyoctaves:
-        keyoctaves = (keyoctave.transpose(t) for t in xrange(instrument.frets))
+        keyoctaves = (keyoctave.transpose(t) for t in range(instrument.frets))
         valid_keyoctaves = (PositionedNote(position=i, note=ko)
                             for i, ko in enumerate(keyoctaves)
                             if ko.key in keys)
@@ -156,7 +156,7 @@ def get_fingering_penalty(fingering):
 
     indexed_poss = sorted(enumerate(x - bar for x in fingering.positions
                                     if x > bar),
-                          key=lambda (string, pos): (pos, string),
+                          key=lambda string_pos: (string_pos[1], string_pos[0]),
                           reverse=True)
     fingers = len(indexed_poss)
     if fingers > 4 or (bar and fingers > 3):
