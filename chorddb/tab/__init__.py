@@ -6,7 +6,7 @@ Created on May 10, 2014
 import collections
 import logging
 import re
-import StringIO
+import io
 
 from .parser import parse_tablature
 

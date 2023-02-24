@@ -25,7 +25,7 @@ _VARIATIONS_NOTES = {
     "m7b5": [["A", "C", "Eb", "G"]],
 }
 VARIATIONS_NOTES = {v: map_variations_to_intervals(nss)
-                    for (v, nss) in _VARIATIONS_NOTES.items()}
+                    for (v, nss) in list(_VARIATIONS_NOTES.items())}
 
 VARIATIONS = sorted((v for v in _VARIATIONS_NOTES if v), reverse=True)
 VARIATIONS_RE = "|".join(VARIATIONS)

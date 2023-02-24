@@ -33,7 +33,7 @@ def noarg_memoize_test():
     counter = CallCounter(func)
     func = memoize(counter)
 
-    for dummy in xrange(5):
+    for dummy in range(5):
         eq_(func(), value)
 
     eq_(counter.call_count, 1)
@@ -49,7 +49,7 @@ def arg_memoize_test():
 
     values = [1, 2, 3, 4]
     for val in values:
-        for dummy in xrange(5):
+        for dummy in range(5):
             eq_(double(val), 2 * val)
     eq_(counter.call_count, len(values))
 
@@ -64,7 +64,7 @@ def kwarg_memoize_test():
 
     values = [1, 2, 3, 4]
     for vala, valb in itertools.product(values, values):
-        for dummy in xrange(5):
+        for dummy in range(5):
             eq_(multiply(vala=vala, valb=valb), vala * valb)
             eq_(multiply(valb=valb, vala=vala), vala * valb)
     eq_(counter.call_count, len(values) ** 2)
@@ -79,7 +79,7 @@ def unhashable_memoize_test():
     sort = memoize(counter)
 
     values = [4, 2, 3, 1]
-    for dummy in xrange(5):
+    for dummy in range(5):
         eq_(sort(values), sorted(values))
 
 
@@ -92,7 +92,7 @@ def memoize_cache_immutability_test():
     def func():
         return resp
 
-    for _x in xrange(2):
+    for _x in range(2):
         cached = func()
         eq_(cached, numbers)
         cached.add(5)
