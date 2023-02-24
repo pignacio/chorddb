@@ -8,7 +8,7 @@ from .chords.variations import map_variations_to_intervals, VARIATIONS_NOTES
 
 
 _Instrument = collections.namedtuple('Instrument', [
-    'name', 'keyoctaves', 'frets', 'has_bass', 'variation_overrides'], verbose=True)
+    'name', 'keyoctaves', 'frets', 'has_bass', 'variation_overrides'])
 
 
 class Instrument(_Instrument):
@@ -46,11 +46,6 @@ class Instrument(_Instrument):
             raise
 
     def capo(self, capo_position):
-        kwds = {
-            'name':"{}(Capo: {})".format(self.name, capo_position),
-            'keyoctaves':[ko.transpose(capo_position) for ko in self.keyoctaves],
-            'frets':self.frets - capo_position,
-        }
         return self._replace(
             name="{}(Capo: {})".format(self.name, capo_position),
             keyoctaves=[ko.transpose(capo_position) for ko in self.keyoctaves],
