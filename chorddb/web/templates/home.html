@@ -1,0 +1,13 @@
+{% extends "base.html" %}
+{% set title="ChordDB Home" %} 
+
+{% block content %}
+<p>Hello world from template!</p>
+
+<h1>Songs</h1>
+<ul>
+  {% for song in songs %}
+  <li> <a href="{{ url_for("song", song_id=song.id, song_slug=song.slug()) }}">{{song.author}} - {{ song.name }}</a></li>
+  {% endfor %}
+</ul>
+{% endblock %}

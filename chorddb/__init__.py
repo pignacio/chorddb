@@ -2,9 +2,8 @@
 
 from argparse import ArgumentParser
 import logging
-import os
 
-from . import terminal, curses
+from . import terminal, curses, web
 from .tab import parse_tablature, transpose_tablature
 from .instrument import UKELELE, Instrument
 
@@ -35,8 +34,19 @@ def add_parsers(subparsers):
                         help="Sets logging level to DEBUG")
     parser.set_defaults(func=_parse_tablature)
 
+    web_parser = subparsers.add_parser("web")
+    web_parser.add_argument("--debug",
+                        action="store_true", dest="debug", default=False,
+                        help="Sets logging level to DEBUG")
+    web_parser.set_defaults(func=web.run)
 
-def _parse_tablature(filename, instrument, use_curses, transpose, capo):
+
+def _parse_tablature(filename, instrument, use_curses, transpose, capo, debug):
+    logging.basicConfig(filename='chorddb.log', filemode="w",
+                        level=(logging.DEBUG
+                               if debug
+                               else logging.INFO))
+
     with open(filename) as fin:
         lines = fin.readlines()
     tablature = parse_tablature(lines)
@@ -61,10 +71,6 @@ def main():
     parser = _get_arg_parser()
     options = parser.parse_args()
 
-    logging.basicConfig(filename='chorddb.log', filemode="w",
-                        level=(logging.DEBUG
-                               if _extract_from_options("debug", options)
-                               else logging.INFO))
     subparser = _extract_from_options("subparser", options)
 
     try:

@@ -1,0 +1,13 @@
+{% extends "base.html" %}
+{% set title="ChordDB  - Song - {{song.author}} - {{song.title}}" %} 
+
+{% block content %}
+<h1>{{ song.author }} - {{ song.name }}</h1>
+
+Contents:
+
+<pre>
+{{ song.contents() }}
+</pre>
+
+{% endblock %}
